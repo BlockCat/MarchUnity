@@ -369,8 +369,6 @@ namespace Mixed
 			var handle = Entities
 				.WithBurst()
 				.WithReadOnly(bfe)
-				.WithNativeDisableParallelForRestriction(bfe)
-				.WithNativeDisableContainerSafetyRestriction(bfe)
 				.WithName("Do_Triangulation")
 				.WithAll<RenderMesh>()
 				.ForEach((Entity entity, int entityInQueryIndex, ref ChunkComponent cc, in TriangulateTag updateData) =>

@@ -222,8 +222,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 490904831}
-  - component: {fileID: 490904832}
   - component: {fileID: 490904830}
+  - component: {fileID: 490904832}
   m_Layer: 0
   m_Name: VoxelMap
   m_TagString: Untagged
