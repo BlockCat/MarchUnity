@@ -20,13 +20,15 @@ public class LevelSettings : MonoBehaviour, IConvertGameObjectToEntity
 		dstManager.AddComponentData(entity, new LevelLoadRequest
 		{
 			Size = Size,
-			ChunkResolution = ChunkResolution
+			ChunkResolution = ChunkResolution,
+			Position = transform.position,
+			Rotation = transform.rotation,
 		});
 	}
 
 	private void OnDrawGizmos()
 	{
 
-		Gizmos.DrawWireCube(new Vector3(Size / 2, Size / 2, 0), new Vector3(Size, Size, 0));
+		Gizmos.DrawWireCube(transform.position + new Vector3(Size / 2, Size / 2, 0), new Vector3(Size, Size, 0));
 	}
 }

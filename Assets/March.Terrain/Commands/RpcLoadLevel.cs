@@ -4,8 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Unity.Burst;
+using Unity.Mathematics;
 using Unity.NetCode;
 using Unity.Networking.Transport;
+using UnityEngine;
 
 namespace Mixed
 {
@@ -17,6 +19,9 @@ namespace Mixed
 		public int ChunkResolution;
 
 		static PortableFunctionPointer<RpcExecutor.ExecuteDelegate> InvokeExecuteFunctionPointer = new PortableFunctionPointer<RpcExecutor.ExecuteDelegate>(InvokeExecute);
+
+		public quaternion Rotation { get; internal set; }
+		public float3 Position { get; internal set; }
 
 		public PortableFunctionPointer<RpcExecutor.ExecuteDelegate> CompileExecute()
 		{

@@ -40,6 +40,9 @@ namespace Client
 			var created = EntityManager.CreateEntity();
 			EntityManager.SetName(created, "LevelInformationEntity");
 			EntityManager.AddComponentData(created, level);
+			EntityManager.AddComponentData(created, new Translation { Value = request.Position });
+			EntityManager.AddComponentData(created, new Rotation { Value = request.Rotation });
+			EntityManager.AddComponentData(created, new LocalToWorld());
 
 			var random = new Unity.Mathematics.Random();
 			random.InitState(1231231453);
@@ -58,7 +61,7 @@ namespace Client
 					Entity diag = y < request.ChunkResolution - 1 && x > 0 ? neighbours[x - 1, y + 1] : Entity.Null;
 					EntityManager.AddComponentData(chunkEntity, new ChunkComponent
 					{
-						Size = request.Size,
+						Size = level.chunkSize,
 						x = x,
 						y = y,
 						leftNeighbour = left,
@@ -79,14 +82,12 @@ namespace Client
 					mesh.normals = new Vector3[4] { v, v, v, v };
 					mesh.RecalculateBounds();
 					EntityManager.AddComponentData(chunkEntity, new TriangulateTag());
-					EntityManager.AddComponentData(chunkEntity, new LocalToWorld
-					{
-						Value = new float4x4(quaternion.Euler(0, math.PI, 0), new float3(x * level.chunkSize, y * level.chunkSize, 0))
-					});
-					EntityManager.AddComponentData(chunkEntity, new RenderBounds
-					{
-						Value = mesh.bounds.ToAABB()
-					});
+					EntityManager.AddComponentData(chunkEntity, new Parent { Value = created });
+					EntityManager.AddComponentData(chunkEntity, new RenderBounds { Value = mesh.bounds.ToAABB() });
+					EntityManager.AddComponentData(chunkEntity, new Translation { Value = new float3(x * level.chunkSize, y * level.chunkSize, 0) });
+					EntityManager.AddComponentData(chunkEntity, new Rotation { Value = quaternion.Euler(0, 0, 0) });
+					EntityManager.AddComponentData(chunkEntity, new LocalToParent());
+					EntityManager.AddComponentData(chunkEntity, new LocalToWorld());
 					EntityManager.AddSharedComponentData(chunkEntity, new RenderMesh
 					{
 						mesh = mesh,

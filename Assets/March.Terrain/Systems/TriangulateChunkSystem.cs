@@ -300,7 +300,6 @@ namespace Assets.March.Terrain.Systems
 		protected override JobHandle OnUpdate(JobHandle inputDeps)
 		{
 			inputDeps.Complete();
-			Debug.Log("Triangulating start");
 			var barrier = m_Barrier.CreateCommandBuffer().ToConcurrent();
 			var bfe = m_Barrier.GetBufferFromEntity<Mixed.Voxel>(true);
 			var level = GetSingleton<LevelComponent>();

@@ -8,7 +8,7 @@ using Unity.Mathematics;
 using Unity.Networking.Transport;
 
 namespace Mixed
-{	
+{
 	public enum VoxelShape
 	{
 		Rectangle, Circle
@@ -53,14 +53,22 @@ namespace Mixed
 			Serialize(ref writer);
 		}
 
-		internal bool InRange(float2 pos)
+		internal bool InRange(float2 pos, int chunkX, int chunkY, float chunkSize)
 		{
-			switch(shape)
+			float px = pos.x + chunkX * chunkSize;
+			float py = pos.y + chunkY * chunkSize;
+			switch (shape)
 			{
 				case VoxelShape.Circle:
-					return pos.x * pos.x + pos.y * pos.y <= radius * radius;
+					var dx = px - centerX;
+					var dy = py - centerY;
+					var c = dx * dx + dy * dy <= radius * radius;
+					return c;
+				//return px * px + py * py <= radius * radius;
+				//return pos.x * pos.x + pos.y * pos.y <= radius * radius;
 				case VoxelShape.Rectangle:
-					return pos.x >= XEnd && pos.x <= XStart && pos.y >= YStart && pos.y <= YEnd;
+					return px >= XStart && px <= XEnd && py >= YStart && py <= YEnd;
+				//return pos.x >= XEnd && pos.x <= XStart && pos.y >= YStart && pos.y <= YEnd;
 				default:
 					throw new ArgumentException();
 			}

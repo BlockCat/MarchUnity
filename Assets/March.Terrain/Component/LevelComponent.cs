@@ -73,6 +73,18 @@ namespace Mixed
 			this.state = state;
 		}
 
+		public Voxel Copy(bool newState)
+		{
+			return new Voxel
+			{
+				typeState = newState ? (byte)1 : (byte)0,
+				position = new float2(position.x, position.y),
+				xEdge = xEdge,
+				yEdge = yEdge,
+				xNormal = xNormal,
+				yNormal = yNormal
+			};
+		}
 		public Voxel CopyDummyX(float chunkSize)
 		{
 			return new Voxel
