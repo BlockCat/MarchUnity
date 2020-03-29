@@ -12,7 +12,7 @@ namespace Mixed
 {
 	public struct LevelComponent : IComponentData
 	{
-		public const int VoxelResolution = 2;
+		public const int VoxelResolution = 16;
 		public float Size, chunkSize, voxelSize, halfSize;
 		public int ChunkResolution;
 
@@ -73,7 +73,7 @@ namespace Mixed
 			this.state = state;
 		}
 
-		internal Voxel CopyDummyX(float chunkSize)
+		public Voxel CopyDummyX(float chunkSize)
 		{
 			return new Voxel
 			{
@@ -93,6 +93,19 @@ namespace Mixed
 				typeState = this.typeState,
 				position = new float2(position.x, position.y + chunkSize),
 				xEdge = xEdge,
+				yEdge = yEdge + chunkSize,
+				xNormal = xNormal,
+				yNormal = yNormal
+			};
+		}
+
+		public Voxel CopyDummyXY(float chunkSize)
+		{
+			return new Voxel
+			{
+				typeState = this.typeState,
+				position = new float2(position.x + chunkSize, position.y + chunkSize),
+				xEdge = xEdge + chunkSize,
 				yEdge = yEdge + chunkSize,
 				xNormal = xNormal,
 				yNormal = yNormal

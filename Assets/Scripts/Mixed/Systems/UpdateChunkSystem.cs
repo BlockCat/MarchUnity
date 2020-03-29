@@ -171,7 +171,7 @@ namespace Mixed
 			int cells = LevelComponent.VoxelResolution - 1;
 			for (int i = 0, y = 0; y < cells; y++, i++)
 			{
-				SwapRowChanges(ref rowCacheMin, ref rowCacheMax);
+				SwapRowCaches(ref rowCacheMin, ref rowCacheMax);
 
 				CacheFirstCorner(voxels[i + LevelComponent.VoxelResolution], ref vertices, ref rowCacheMax);
 				CacheNextMiddleEdge(voxels[i], voxels[i + LevelComponent.VoxelResolution], ref edgeCacheMin, ref edgeCacheMax, ref vertices);
@@ -205,7 +205,50 @@ namespace Mixed
 			CacheNextEdgeAndCorner(cacheIndex, voxels[i + LevelComponent.VoxelResolution], dummyX, ref vertices, ref rowCacheMax);
 			CacheNextMiddleEdge(dummyT, dummyX, ref edgeCacheMin, ref edgeCacheMax, ref vertices);
 			TriangulateCell(cacheIndex, voxels[i], dummyT, voxels[i + LevelComponent.VoxelResolution], dummyX, ref triangles, ref vertices, ref edgeCacheMin, ref edgeCacheMax, ref rowCacheMax, ref rowCacheMin);
+		}
 
+		[BurstCompile]
+		private static void TriangulateGapRow(Entity entity, float chunkSize, ref ChunkComponent cc, ref BufferFromEntity<Mixed.Voxel> bfe, ref DynamicBuffer<IntBuffer> triangles, ref DynamicBuffer<VectorBuffer> vertices, ref int edgeCacheMin, ref int edgeCacheMax, ref NativeArray<int> rowCacheMax, ref NativeArray<int> rowCacheMin)
+		{
+
+			int cells = LevelComponent.VoxelResolution - 1;
+			int offset = cells * LevelComponent.VoxelResolution;
+
+			var voxels = bfe[entity];
+			var neighbourVoxels = bfe[cc.upNeighbour];
+
+			var dummyY = neighbourVoxels[0].CopyDummyY(chunkSize);
+
+			SwapRowCaches(ref rowCacheMin, ref rowCacheMax);
+			CacheFirstCorner(dummyY, ref vertices, ref rowCacheMax);
+			CacheNextMiddleEdge(voxels[cells * LevelComponent.VoxelResolution], dummyY, ref edgeCacheMin, ref edgeCacheMax, ref vertices);
+
+			for (int x = 0; x < cells; x++)
+			{
+				var dummyT = dummyY.CopyDummyX(0);
+				dummyY = neighbourVoxels[x + 1].CopyDummyY(chunkSize);
+				var cacheIndex = x * 2;
+				CacheNextEdgeAndCorner(cacheIndex, dummyT, dummyY, ref vertices, ref rowCacheMax);
+				CacheNextMiddleEdge(voxels[x + offset + 1], dummyY, ref edgeCacheMin, ref edgeCacheMax, ref vertices);
+				TriangulateCell(cacheIndex, voxels[x + offset], voxels[x + offset + 1], dummyT, dummyY, ref triangles, ref vertices, ref edgeCacheMin, ref edgeCacheMax, ref rowCacheMax, ref rowCacheMin);
+			}
+
+			if (cc.diagNeighbour != Entity.Null)
+			{
+				var leftVoxels = bfe[cc.leftNeighbour];
+				var a = voxels[voxels.Length - 1];
+				var b = leftVoxels[leftVoxels.Length - LevelComponent.VoxelResolution].CopyDummyX(chunkSize);
+				var c = neighbourVoxels[LevelComponent.VoxelResolution - 1].CopyDummyY(chunkSize);
+				var d = bfe[cc.diagNeighbour][0].CopyDummyXY(chunkSize);
+				Debug.Assert(a.position.x == c.position.x);
+				Debug.Assert(a.position.y == b.position.y);
+				Debug.Assert(b.position.x == d.position.x);
+				Debug.Assert(c.position.y == d.position.y);
+				var cacheIndex = cells * 2;
+				CacheNextEdgeAndCorner(cacheIndex, c, d, ref vertices, ref rowCacheMax);
+				CacheNextMiddleEdge(b, d, ref edgeCacheMin, ref edgeCacheMax, ref vertices);
+				TriangulateCell(cacheIndex, a, b, c, d, ref triangles, ref vertices, ref edgeCacheMin, ref edgeCacheMax, ref rowCacheMax, ref rowCacheMin);
+			}
 		}
 
 		[BurstCompile]
@@ -275,7 +318,7 @@ namespace Mixed
 		}
 
 		[BurstCompile]
-		private static void SwapRowChanges(ref NativeArray<int> cacheMin, ref NativeArray<int> cacheMax)
+		private static void SwapRowCaches(ref NativeArray<int> cacheMin, ref NativeArray<int> cacheMax)
 		{
 			var temp = cacheMin;
 			cacheMin = cacheMax;
@@ -344,7 +387,10 @@ namespace Mixed
 
 					FillFirstRowCache(entity, level.chunkSize, ref cc, ref bfe, ref triangles, ref vertices, ref rowCacheMax);
 					TriangulateCellRows(entity, level.chunkSize, ref cc, ref bfe, ref triangles, ref edgeCacheMin, ref edgeCacheMax, ref vertices, ref rowCacheMax, ref rowCacheMin);
-
+					if (cc.upNeighbour != Entity.Null)
+					{
+						TriangulateGapRow(entity, level.chunkSize, ref cc, ref bfe, ref triangles, ref vertices, ref edgeCacheMin, ref edgeCacheMax, ref rowCacheMax, ref rowCacheMin);
+					}
 					rowCacheMax.Dispose();
 					rowCacheMin.Dispose();
 

@@ -41,8 +41,11 @@ namespace Client
 			EntityManager.SetName(created, "LevelInformationEntity");
 			EntityManager.AddComponentData(created, level);
 
+			var random = new Unity.Mathematics.Random();
+			random.InitState(1231231453);
+
 			Entity[,] neighbours = new Entity[request.ChunkResolution, request.ChunkResolution];
-			for (int y = 0; y < request.ChunkResolution; y++)
+			for (int y = request.ChunkResolution - 1; y >= 0; y--)
 			{
 				for (int x = 0; x < request.ChunkResolution; x++)
 				{
@@ -51,8 +54,8 @@ namespace Client
 					EntityManager.SetName(chunkEntity, $"Chunk_{x}_{y}");
 
 					Entity left = x > 0 ? neighbours[x - 1, y] : Entity.Null;
-					Entity up = y > 0 ? neighbours[x, y - 1] : Entity.Null;
-					Entity diag = y > 0 && x > 0 ? neighbours[x - 1, y - 1] : Entity.Null;
+					Entity up = y < request.ChunkResolution - 1 ? neighbours[x, y + 1] : Entity.Null;
+					Entity diag = y < request.ChunkResolution - 1 && x > 0 ? neighbours[x - 1, y + 1] : Entity.Null;
 					EntityManager.AddComponentData(chunkEntity, new ChunkComponent
 					{
 						Size = request.Size,
@@ -95,8 +98,6 @@ namespace Client
 
 					});
 					var voxelBuffer = EntityManager.AddBuffer<Mixed.Voxel>(chunkEntity);
-					var random = new Unity.Mathematics.Random();
-					random.InitState(1231231453);
 
 					for (int vy = 0; vy < LevelComponent.VoxelResolution; vy++)
 					{
