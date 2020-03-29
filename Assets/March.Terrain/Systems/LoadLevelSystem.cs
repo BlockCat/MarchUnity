@@ -104,7 +104,7 @@ namespace Client
 						for (int vx = 0; vx < LevelComponent.VoxelResolution; vx++)
 						{
 							bool st = random.NextBool();//(vx + vy) % 2 == 0;
-
+							st = true;
 							voxelBuffer.Add(new Mixed.Voxel(st, vx, vy, level.voxelSize));
 						}
 					}

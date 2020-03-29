@@ -1,4 +1,4 @@
-﻿using Unity.Entities;
+﻿/*using Unity.Entities;
 using UnityEngine;
 
 
@@ -156,4 +156,4 @@ public class VoxelMap : MonoBehaviour
 		stencilIndex = GUILayout.SelectionGrid(stencilIndex, stencilNames, 2);
 		GUILayout.EndArea();
 	}
-}
+}*/

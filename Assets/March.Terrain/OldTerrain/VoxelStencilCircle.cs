@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+﻿/*using UnityEngine;
 
 public class VoxelStencilCircle : VoxelStencil {
 	
@@ -75,4 +75,4 @@ public class VoxelStencilCircle : VoxelStencil {
 			}
 		}
 	}
-}
+}*/

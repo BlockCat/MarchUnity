@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 using System;
-
+/*
 public class Voxel
 {
 	public bool state = true;
@@ -51,4 +51,4 @@ public class Voxel
 		xEdge = voxel.xEdge + offset;
 		yEdge = voxel.yEdge + offset;
 	}
-}
+}*/
