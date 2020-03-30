@@ -50,15 +50,15 @@ namespace Client
 			Entity[,] neighbours = new Entity[request.ChunkResolution, request.ChunkResolution];
 			for (int y = request.ChunkResolution - 1; y >= 0; y--)
 			{
-				for (int x = 0; x < request.ChunkResolution; x++)
+				for (int x = request.ChunkResolution - 1; x >= 0; x--)
 				{
 					var chunkEntity = EntityManager.CreateEntity();
 					neighbours[x, y] = chunkEntity;
 					EntityManager.SetName(chunkEntity, $"Chunk_{x}_{y}");
 
-					Entity left = x > 0 ? neighbours[x - 1, y] : Entity.Null;
+					Entity left = x < request.ChunkResolution - 1 ? neighbours[x + 1, y] : Entity.Null;
 					Entity up = y < request.ChunkResolution - 1 ? neighbours[x, y + 1] : Entity.Null;
-					Entity diag = y < request.ChunkResolution - 1 && x > 0 ? neighbours[x - 1, y + 1] : Entity.Null;
+					Entity diag = y < request.ChunkResolution - 1 && x < request.ChunkResolution - 1 ? neighbours[x + 1, y + 1] : Entity.Null;
 					EntityManager.AddComponentData(chunkEntity, new ChunkComponent
 					{
 						Size = level.chunkSize,

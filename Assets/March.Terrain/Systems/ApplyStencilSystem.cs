@@ -30,9 +30,11 @@ namespace Mixed
 		protected override JobHandle OnUpdate(JobHandle inputDeps)
 		{
 			var level = GetSingleton<LevelComponent>();
+			var levelEntity = GetSingletonEntity<LevelComponent>();
 			var barrier = m_Barrier.CreateCommandBuffer().ToConcurrent();
 			var chunkEntities = m_ChunkGroup.ToEntityArrayAsync(Unity.Collections.Allocator.TempJob, out JobHandle groupHandle2);
 			var chunkData = GetComponentDataFromEntity<ChunkComponent>(true);
+			var localToWorld = GetComponentDataFromEntity<LocalToWorld>(true)[levelEntity].Value;
 			var handle = Entities
 				.WithName("Apply_Stencil")
 				.WithReadOnly(chunkData)
@@ -42,10 +44,23 @@ namespace Mixed
 				{
 					barrier.DestroyEntity(entityInQueryIndex, entity);
 
-					int xChunkStart = (int)((inputData.XStart) / level.chunkSize);
-					int xChunkEnd = (int)((inputData.XEnd) / level.chunkSize);
-					int yChunkStart = (int)((inputData.YStart) / level.chunkSize);
-					int yChunkEnd = (int)((inputData.YEnd) / level.chunkSize);
+					var stencilPosition = new float4(inputData.centerX, inputData.centerY, 0, 1);
+					var translatedStencilPosition = math.mul(math.inverse(localToWorld), stencilPosition);
+
+					var translatedData = new VoxelStencilInput
+					{
+						centerX = translatedStencilPosition.x,
+						centerY = translatedStencilPosition.y,
+						fillType = inputData.fillType,
+						radius = inputData.radius,
+						shape = inputData.shape,
+						Tick = inputData.Tick
+					};
+
+					int xChunkStart = (int)((translatedData.XStart - 1) / level.chunkSize);
+					int xChunkEnd = (int)((translatedData.XEnd + 1) / level.chunkSize);
+					int yChunkStart = (int)((translatedData.YStart - 1) / level.chunkSize);
+					int yChunkEnd = (int)((translatedData.YEnd + 1) / level.chunkSize);
 
 					if (xChunkStart < 0) xChunkStart = 0;
 					if (xChunkEnd >= level.ChunkResolution) xChunkEnd = level.ChunkResolution - 1;
@@ -59,7 +74,8 @@ namespace Mixed
 
 						if (data.x >= xChunkStart && data.x <= xChunkEnd && data.y >= yChunkStart && data.y <= yChunkEnd)
 						{
-							barrier.AddComponent(entityInQueryIndex, chunk, new UpdateChunkTag { input = inputData });
+							Debug.Log($"{data.x}, {data.y}");
+							barrier.AddComponent(entityInQueryIndex, chunk, new UpdateChunkTag { input = translatedData });
 						}
 					}
 				}).Schedule(JobHandle.CombineDependencies(groupHandle2, inputDeps));

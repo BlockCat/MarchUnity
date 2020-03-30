@@ -137,12 +137,14 @@ namespace Assets.March.Terrain.Systems
 			Debug.Assert(i % LevelComponent.VoxelResolution == (LevelComponent.VoxelResolution - 1));
 			var voxels = bfe[entity];
 			int cacheIndex = (LevelComponent.VoxelResolution - 1) * 2;
-			var dummyX = bfe[cc.leftNeighbour][i + 1].CopyDummyX(chunkSize);
-			var dummyT = bfe[cc.leftNeighbour][i + 1 - LevelComponent.VoxelResolution].CopyDummyX(chunkSize);
+			var a = voxels[i];
+			var b = bfe[cc.leftNeighbour][i + 1 - LevelComponent.VoxelResolution].CopyDummyX(chunkSize);
+			var c = voxels[i + LevelComponent.VoxelResolution];
+			var d = bfe[cc.leftNeighbour][i + 1].CopyDummyX(chunkSize);
 
-			CacheNextEdgeAndCorner(cacheIndex, voxels[i + LevelComponent.VoxelResolution], dummyX, ref vertices, ref rowCacheMax);
-			CacheNextMiddleEdge(dummyT, dummyX, ref edgeCacheMin, ref edgeCacheMax, ref vertices);
-			TriangulateCell(cacheIndex, voxels[i], dummyT, voxels[i + LevelComponent.VoxelResolution], dummyX, ref triangles, ref vertices, ref edgeCacheMin, ref edgeCacheMax, ref rowCacheMax, ref rowCacheMin);
+			CacheNextEdgeAndCorner(cacheIndex, voxels[i + LevelComponent.VoxelResolution], d, ref vertices, ref rowCacheMax);
+			CacheNextMiddleEdge(b, d, ref edgeCacheMin, ref edgeCacheMax, ref vertices);
+			TriangulateCell(cacheIndex, a, b, c, d, ref triangles, ref vertices, ref edgeCacheMin, ref edgeCacheMax, ref rowCacheMax, ref rowCacheMin);
 		}
 
 		[BurstCompile]

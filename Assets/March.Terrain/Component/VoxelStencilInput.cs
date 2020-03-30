@@ -15,7 +15,7 @@ namespace Mixed
 	}
 	public struct VoxelStencilInput : IComponentData
 	{
-		public uint Tick { get; private set; }
+		public uint Tick { get; set; }
 		public bool fillType;
 		public float centerX, centerY, radius;
 		public VoxelShape shape;
@@ -53,10 +53,10 @@ namespace Mixed
 			Serialize(ref writer);
 		}
 
-		internal bool InRange(float2 pos, int chunkX, int chunkY, float chunkSize)
+		internal bool InRange(float2 pos)
 		{
-			float px = pos.x + chunkX * chunkSize;
-			float py = pos.y + chunkY * chunkSize;
+			float px = pos.x;
+			float py = pos.y;
 			switch (shape)
 			{
 				case VoxelShape.Circle:
