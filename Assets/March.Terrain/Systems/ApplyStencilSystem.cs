@@ -74,7 +74,6 @@ namespace Mixed
 
 						if (data.x >= xChunkStart && data.x <= xChunkEnd && data.y >= yChunkStart && data.y <= yChunkEnd)
 						{
-							Debug.Log($"{data.x}, {data.y}");
 							barrier.AddComponent(entityInQueryIndex, chunk, new UpdateChunkTag { input = translatedData });
 						}
 					}
