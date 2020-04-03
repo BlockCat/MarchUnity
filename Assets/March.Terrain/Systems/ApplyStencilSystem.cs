@@ -77,6 +77,8 @@ namespace Mixed
 							barrier.AddComponent(entityInQueryIndex, chunk, new UpdateChunkTag { input = translatedData });
 						}
 					}
+
+					
 				}).Schedule(JobHandle.CombineDependencies(groupHandle2, inputDeps));
 			m_Barrier.AddJobHandleForProducer(handle);
 			return handle;

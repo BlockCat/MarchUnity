@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Unity.Burst;
 using Unity.Entities;
 using Unity.NetCode;
+using Unity.Networking.Transport;
 using UnityEngine;
 
 [UpdateInWorld(UpdateInWorld.TargetWorld.Default)]
@@ -21,13 +22,24 @@ public class Game : ComponentSystem
 	{
 		Debug.Log("Starting Game");
 		EntityManager.DestroyEntity(GetSingletonEntity<InitGameComponent>());
-		/*
-		var entity = EntityManager.CreateEntity();
-		EntityManager.SetName(entity, "LevelLoadRequest");
-		EntityManager.AddComponentData(entity, new LevelLoadRequest
+		
+		foreach (var world in World.All)
 		{
-			ChunkResolution = 4,
-			Size = 4
-		});*/
+			var network = world.GetExistingSystem<NetworkStreamReceiveSystem>();
+			if (world.GetExistingSystem<ClientSimulationSystemGroup>() != null)
+			{
+				NetworkEndPoint ep = NetworkEndPoint.LoopbackIpv4;
+				ep.Port = 7979;
+				network.Connect(ep);
+			}
+#if UNITY_EDITOR
+			else
+			{
+				NetworkEndPoint ep = NetworkEndPoint.AnyIpv4;
+				ep.Port = 7979;
+				network.Listen(ep);
+			}
+#endif
+		}
 	}
 }

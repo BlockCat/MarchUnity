@@ -61,9 +61,11 @@ namespace Mixed
 			position.x = (x + 0.5f) * size;
 			position.y = (y + 0.5f) * size;
 
-			xEdge = position.x + 0.5f * size;
+			//xEdge = position.x + 0.5f * size;
+			yEdge = 0;// float.MinValue;
+			xEdge = float.MinValue;
 			yEdge = position.y + 0.5f * size;
-
+			
 			xNormal = float2.zero;
 			yNormal = float2.zero;
 		}

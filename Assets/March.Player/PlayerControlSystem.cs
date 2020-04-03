@@ -51,7 +51,7 @@ namespace Assets.March.Player
 							centerY = t.Value.y,
 							fillType = false,
 							radius = 1,
-							shape = VoxelShape.Circle
+							shape = VoxelShape.Rectangle
 						});
 					}
 				});
