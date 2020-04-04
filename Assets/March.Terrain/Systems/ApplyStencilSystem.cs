@@ -34,7 +34,7 @@ namespace Mixed
 			var barrier = m_Barrier.CreateCommandBuffer().ToConcurrent();
 			var chunkEntities = m_ChunkGroup.ToEntityArrayAsync(Unity.Collections.Allocator.TempJob, out JobHandle groupHandle2);
 			var chunkData = GetComponentDataFromEntity<ChunkComponent>(true);
-			var localToWorld = GetComponentDataFromEntity<LocalToWorld>(true)[levelEntity].Value;
+			var localToWorld = GetComponentDataFromEntity<LocalToWorld>(true)[levelEntity];
 			var handle = Entities
 				.WithName("Apply_Stencil")
 				.WithReadOnly(chunkData)
@@ -45,7 +45,7 @@ namespace Mixed
 					barrier.DestroyEntity(entityInQueryIndex, entity);
 
 					var stencilPosition = new float4(inputData.centerX, inputData.centerY, 0, 1);
-					var translatedStencilPosition = math.mul(math.inverse(localToWorld), stencilPosition);
+					var translatedStencilPosition = math.mul(math.inverse(localToWorld.Value), stencilPosition);
 
 					var translatedData = new VoxelStencilInput
 					{

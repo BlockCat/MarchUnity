@@ -12,7 +12,9 @@ GameObject:
   - component: {fileID: 3427091171488438945}
   - component: {fileID: 3427091171488438944}
   - component: {fileID: 3427091171488438947}
+  - component: {fileID: 2968715270883535364}
   - component: {fileID: 3427091171488438946}
+  - component: {fileID: 5177657318173659085}
   m_Layer: 0
   m_Name: Sphere
   m_TagString: Untagged
@@ -28,8 +30,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3427091171488438949}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 12.1, y: 10.96, z: 0.09}
-  m_LocalScale: {x: 0.2, y: 0.2, z: 0.2}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 0.3, y: 0.3, z: 0.3}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -60,7 +62,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
+  - {fileID: 2100000, guid: 26a08db7b187a694d81e898e6eb75bb0, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -93,6 +95,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 637837f240617d04581d39e95e75d87f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &2968715270883535364
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3427091171488438949}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 105a768de6186ec40a7c6a6e26478508, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  PlayerId: 0
 --- !u!114 &3427091171488438946
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -108,3 +123,106 @@ MonoBehaviour:
   ConversionMode: 0
   ConversionTarget: 3
   canDestroy: 0
+--- !u!114 &5177657318173659085
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3427091171488438949}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7c79d771cedb4794bf100ce60df5f764, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  prefabId: 6ce015cbf419b2d49bfaffa59b96add4
+  DefaultClientInstantiationType: 2
+  RootPath: /March.Generated/
+  SnapshotDataPath: SphereSnapshotData.cs
+  UpdateSystemPath: SphereGhostUpdateSystem.cs
+  SerializerPath: SphereGhostSerializer.cs
+  Importance: 1
+  PredictingPlayerNetworkId: Assets.March.Player.Authoring.MovablePlayerComponent.PlayerId
+  Components:
+  - name: Assets.March.Player.Authoring.MovablePlayerComponent
+    interpolatedClient: 1
+    predictedClient: 1
+    server: 1
+    sendDataTo: 0
+    fields:
+    - name: PlayerId
+      quantization: -1
+      interpolate: 0
+    manualFieldList: 0
+    entityIndex: 0
+  - name: Assets.March.Player.PlayerTag
+    interpolatedClient: 1
+    predictedClient: 1
+    server: 1
+    sendDataTo: 0
+    fields: []
+    manualFieldList: 0
+    entityIndex: 0
+  - name: Unity.Rendering.PerInstanceCullingTag
+    interpolatedClient: 1
+    predictedClient: 1
+    server: 0
+    sendDataTo: 0
+    fields: []
+    manualFieldList: 0
+    entityIndex: 0
+  - name: Unity.Rendering.RenderBounds
+    interpolatedClient: 1
+    predictedClient: 1
+    server: 0
+    sendDataTo: 0
+    fields: []
+    manualFieldList: 0
+    entityIndex: 0
+  - name: Unity.Rendering.RenderMesh
+    interpolatedClient: 1
+    predictedClient: 1
+    server: 0
+    sendDataTo: 0
+    fields: []
+    manualFieldList: 0
+    entityIndex: 0
+  - name: Unity.Transforms.LocalToWorld
+    interpolatedClient: 1
+    predictedClient: 1
+    server: 1
+    sendDataTo: 0
+    fields: []
+    manualFieldList: 0
+    entityIndex: 0
+  - name: Unity.Transforms.NonUniformScale
+    interpolatedClient: 1
+    predictedClient: 1
+    server: 1
+    sendDataTo: 0
+    fields: []
+    manualFieldList: 0
+    entityIndex: 0
+  - name: Unity.Transforms.Rotation
+    interpolatedClient: 1
+    predictedClient: 1
+    server: 1
+    sendDataTo: 0
+    fields:
+    - name: Value
+      quantization: 1000
+      interpolate: 1
+    manualFieldList: 0
+    entityIndex: 0
+  - name: Unity.Transforms.Translation
+    interpolatedClient: 1
+    predictedClient: 1
+    server: 1
+    sendDataTo: 0
+    fields:
+    - name: Value
+      quantization: 100
+      interpolate: 1
+    manualFieldList: 0
+    entityIndex: 0
+  doNotStrip: 0

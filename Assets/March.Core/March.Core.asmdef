@@ -1,9 +1,7 @@
 {
     "name": "March.Core",
     "references": [
-        "GUID:a4819f8aac26b0a498f4108a7998fc97",
-        "GUID:f9fa89f3e63ff954d8f9c730433f679f",        
-		"GUID:734d92eba21c94caba915361bd5ac177",
+        "GUID:734d92eba21c94caba915361bd5ac177",
         "GUID:8819f35a0fc84499b990e90a4ca1911f",
         "GUID:953adc2a6b8b4e3c8df5b728bcd546e9",
         "GUID:e31c28f855847544bb5a2b10844a00b0",
