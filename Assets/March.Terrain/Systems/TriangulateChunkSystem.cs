@@ -7,6 +7,7 @@ using Unity.Collections;
 using Unity.Entities;
 using Unity.Jobs;
 using Unity.Mathematics;
+using Unity.NetCode;
 using Unity.Rendering;
 using UnityEngine;
 
@@ -31,6 +32,7 @@ namespace Assets.March.Terrain.Systems
 		public static implicit operator VectorBuffer(Vector3 e) => new VectorBuffer { Value = e };
 	}
 
+	[UpdateInGroup(typeof(ClientPresentationSystemGroup))]
 	[UpdateAfter(typeof(UpdateChunkSystem))]
 	public class TriangulateChunkSystem : JobComponentSystem
 	{

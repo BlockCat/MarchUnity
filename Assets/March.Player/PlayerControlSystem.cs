@@ -169,8 +169,8 @@ namespace Assets.March.Player
 							centerX = t.Value.x,
 							centerY = t.Value.y,
 							fillType = false,
-							radius = 1,
-							shape = VoxelShape.Rectangle
+							radius = 1f,
+							shape = VoxelShape.Circle
 						});
 					}
 				}).Schedule(inputDeps);

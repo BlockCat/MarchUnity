@@ -71,305 +71,232 @@ namespace Mixed
 								if (stencil.InRange(pos))
 								{
 									buffer[i] = buffer[i].Copy(stencil.fillType);
-
-
-									if (y > 0 && !stencil.InRange(buffer[i - LevelComponent.VoxelResolution].position))
+									if (stencil.shape == VoxelShape.Rectangle)
 									{
-										int index = i - LevelComponent.VoxelResolution;
-										var v = buffer[index].Copy(buffer[index].state);
-										if (buffer[index].state != stencil.fillType)
-										{
-											if (v.yEdge == float.MinValue || v.yEdge > stencil.YStart)
-												v.yEdge = stencil.YStart;
-										}
-										else
-										{
-											v.yEdge = float.MinValue;
-										}
-										buffer[index] = v;
+										handleSquareY(ref voxelBuffer, ref buffer, ref stencil, yNeighbor, x, y, i);
+										handleSquareX(ref voxelBuffer, ref buffer, ref stencil, xNeighbor, x, y, i);
 									}
-									else if (y == 0 && yNeighbor != Entity.Null)
+									else
 									{
-										var neighourBuffer = voxelBuffer[yNeighbor];
-										var otherDude = neighourBuffer[LevelComponent.VoxelResolution * (LevelComponent.VoxelResolution - 1) + x];
-										if (!stencil.InRange(otherDude.position))
-										{
-											if (otherDude.state != stencil.fillType)
-											{
-												if (otherDude.yEdge == float.MinValue || otherDude.yEdge > stencil.YStart)
-													otherDude.yEdge = stencil.YStart;
-											}
-											else
-											{
-												otherDude.yEdge = float.MinValue;
-											}
-											neighourBuffer[LevelComponent.VoxelResolution * (LevelComponent.VoxelResolution - 1) + x] = otherDude;
-										}
-									}
-
-									if (y < LevelComponent.VoxelResolution - 1 && !stencil.InRange(buffer[i + LevelComponent.VoxelResolution].position))
-									{
-										int index = i + LevelComponent.VoxelResolution;
-										var v = buffer[i].Copy(buffer[i].state);
-										if (buffer[index].state != stencil.fillType)
-										{
-											if (v.yEdge == float.MinValue || v.yEdge < stencil.YEnd)
-												v.yEdge = stencil.YEnd;
-										}
-										else
-										{
-											v.yEdge = float.MinValue;
-										}
-										buffer[i] = v;
-									}
-
-									if (x > 0 && !stencil.InRange(buffer[i - 1].position))
-									{
-										var v = buffer[i - 1].Copy(buffer[i - 1].state);
-										if (buffer[i - 1].state != stencil.fillType)
-										{
-											if (v.xEdge == float.MinValue || v.xEdge > stencil.XStart)
-												v.xEdge = stencil.XStart;
-										}
-										else
-										{
-											v.xEdge = float.MinValue;
-										}
-										buffer[i - 1] = v;
-									}
-									else if (x == 0 && xNeighbor != Entity.Null)
-									{
-										var neighourBuffer = voxelBuffer[xNeighbor];
-										var otherDude = neighourBuffer[(y + 1) * LevelComponent.VoxelResolution - 1];
-										if (!stencil.InRange(otherDude.position))
-										{
-											if (otherDude.state != stencil.fillType)
-											{
-												if (otherDude.xEdge == float.MinValue || otherDude.xEdge > stencil.XStart)
-													otherDude.xEdge = stencil.XStart;
-											}
-											else
-											{
-												otherDude.xEdge = float.MinValue;
-											}
-											neighourBuffer[(y + 1) * LevelComponent.VoxelResolution - 1] = otherDude;
-										}
-									}
-
-									if (x < LevelComponent.VoxelResolution - 1 && !stencil.InRange(buffer[i + 1].position))
-									{
-										var v = buffer[i].Copy(buffer[i].state);
-										if (buffer[i + 1].state != stencil.fillType)
-										{
-											if (v.xEdge == float.MinValue || v.xEdge < stencil.XEnd)
-												v.xEdge = stencil.XEnd;
-										}
-										else
-										{
-											v.xEdge = float.MinValue;
-										}
-										buffer[i] = v;
+										handleCircleX(ref voxelBuffer, ref buffer, ref stencil, xNeighbor, x, y, i);
+										handleCircleY(ref voxelBuffer, ref buffer, ref stencil, yNeighbor, x, y, i);
 									}
 
 								}
 							}
 						}
-
-						// if (xEnd >= 0 && yEnd >= 0 && xEnd >= xStart && yEnd >= yStart)
-						// SetCrossings(xStart, xEnd, yStart, yEnd, ref buffer);
 					}
-
-					//void SetCrossings(int xStart, int xEnd, int yStart, int yEnd, ref DynamicBuffer<Voxel> voxels)
-					//{
-					//	bool crossHorizontalGap = false;
-					//	bool lastVerticalRow = false;
-					//	bool crossVerticalGap = false;
-
-					//	if (xStart > 0)
-					//	{
-					//		xStart -= 1;
-					//	}
-					//	if (xEnd == LevelComponent.VoxelResolution - 1)
-					//	{
-					//		xEnd -= 1;
-					//		crossHorizontalGap = xNeighbor != null;
-					//	}
-					//	if (yStart > 0)
-					//	{
-					//		yStart -= 1;
-					//	}
-					//	if (yEnd == LevelComponent.VoxelResolution - 1)
-					//	{
-					//		yEnd -= 1;
-					//		lastVerticalRow = true;
-					//		crossVerticalGap = yNeighbor != null;
-					//	}
-
-					//	Voxel a, b;
-					//	for (int y = yStart; y <= yEnd; y++)
-					//	{
-					//		int i = y * LevelComponent.VoxelResolution + xStart;
-					//		b = voxels[i];
-					//		for (int x = xStart; x <= xEnd; x++, i++)
-					//		{
-					//			a = b;
-					//			b = voxels[i + 1];
-					//			SetHorizontalCrossing(a, b);
-					//			SetVerticalCrossing(a, voxels[i + LevelComponent.VoxelResolution]);
-					//		}
-					//		SetVerticalCrossing(b, voxels[i + LevelComponent.VoxelResolution]);
-					//		if (crossHorizontalGap && xNeighbor != Entity.Null)
-					//		{
-					//			var dummyX = voxelBuffer[xNeighbor][y * LevelComponent.VoxelResolution].CopyDummyX(level.chunkSize);
-					//			SetHorizontalCrossing(b, dummyX);
-					//		}
-					//	}
-
-					//	if (lastVerticalRow)
-					//	{
-					//		int i = voxels.Length - LevelComponent.VoxelResolution + xStart;
-					//		b = voxels[i];
-					//		for (int x = xStart; x <= xEnd; x++, i++)
-					//		{
-					//			a = b;
-					//			b = voxels[i + 1];
-					//			SetHorizontalCrossing(a, b);
-					//			if (crossVerticalGap)
-					//			{
-					//				var dummyY = voxelBuffer[yNeighbor][x].CopyDummyY(level.chunkSize);
-					//				SetVerticalCrossing(a, dummyY);
-					//			}
-					//		}
-					//		if (crossVerticalGap)
-					//		{
-					//			var dummyY = voxelBuffer[yNeighbor][xEnd + 1].CopyDummyY(level.chunkSize);
-					//			SetVerticalCrossing(b, dummyY);
-					//		}
-					//		if (crossHorizontalGap)
-					//		{
-					//			var dummyX = voxelBuffer[xNeighbor][voxels.Length - LevelComponent.VoxelResolution].CopyDummyX(level.chunkSize);
-					//			SetHorizontalCrossing(b, dummyX);
-					//		}
-					//	}
-					//}
-
-					//void SetHorizontalCrossing(Voxel xMin, Voxel xMax)
-					//{
-					//	if (xMin.state != xMax.state)
-					//	{
-					//		FindHorizontalCrossing(xMin, xMax);
-					//	}
-					//	else
-					//	{
-					//		xMin.xEdge = float.MinValue;
-					//	}
-					//}
-
-					//void FindHorizontalCrossing(Voxel xMin, Voxel xMax)
-					//{
-					//	/*if (xMin.position.y < stencil.YStart || xMin.position.y > stencil.YEnd)
-					//		return;
-
-					//		var sten = stencil;
-					//	if (xMin.state == stencil.fillType)
-					//	{
-					//		if (xMin.position.x <= sten.XEnd && xMax.position.x >= stencil.XEnd)
-					//		{
-					//			if (xMin.xEdge == float.MinValue || xMin.xEdge < stencil.XEnd)
-					//			{
-					//				xMin.xEdge = stencil.XEnd;
-					//				xMin.xNormal = new float2(stencil.fillType ? 1f : -1f, 0f);
-					//			}
-					//		}
-					//	}
-					//	else if (xMax.state == stencil.fillType)
-					//	{
-					//		if (xMin.position.x <= stencil.XStart && xMax.position.x >= stencil.XStart)
-					//		{
-					//			if (xMin.xEdge == float.MinValue || xMin.xEdge > stencil.XStart)
-					//			{
-					//				xMin.xEdge = stencil.XStart;
-					//				xMin.xNormal = new float2(stencil.fillType ? -1f : 1f, 0f);
-					//			}
-					//		}
-					//	}*/
-					//	if (xMax.position.y < stencil.YStart || xMax.position.y > stencil.YEnd)
-					//		return;
-
-					//	var sten = stencil;
-					//	if (xMax.state == stencil.fillType)
-					//	{
-					//		if (xMax.position.x <= sten.XEnd && xMin.position.x >= stencil.XEnd)
-					//		{
-					//			if (xMax.xEdge == float.MinValue || xMax.xEdge < stencil.XEnd)
-					//			{
-					//				xMax.xEdge = stencil.XEnd;
-					//				xMax.xNormal = new float2(stencil.fillType ? 1f : -1f, 0f);
-					//			}
-					//		}
-					//	}
-					//	else if (xMin.state == stencil.fillType)
-					//	{
-					//		if (xMax.position.x <= stencil.XStart && xMin.position.x >= stencil.XStart)
-					//		{
-					//			if (xMax.xEdge == float.MinValue || xMax.xEdge > stencil.XStart)
-					//			{
-					//				xMax.xEdge = stencil.XStart;
-					//				xMax.xNormal = new float2(stencil.fillType ? -1f : 1f, 0f);
-					//			}
-					//		}
-					//	}
-					//}
-
-					//void SetVerticalCrossing(Voxel yMin, Voxel yMax)
-					//{
-					//	if (yMin.state != yMax.state)
-					//	{
-					//		FindVerticalCrossing(yMin, yMax);
-					//	}
-					//	else
-					//	{
-					//		yMin.yEdge = float.MinValue;
-					//	}
-					//}
-
-
-					//void FindVerticalCrossing(Voxel yMin, Voxel yMax)
-					//{
-					//	if (yMin.position.x < stencil.XStart || yMin.position.x > stencil.XEnd)
-					//	{
-					//		return;
-					//	}
-					//	if (yMin.state == stencil.fillType)
-					//	{
-					//		if (yMin.position.y <= stencil.YEnd && yMax.position.y >= stencil.YEnd)
-					//		{
-					//			if (yMin.yEdge == float.MinValue || yMin.yEdge < stencil.YEnd)
-					//			{
-					//				yMin.yEdge = stencil.YEnd;
-					//				yMin.yNormal = new float2(0f, stencil.fillType ? 1f : -1f);
-					//			}
-					//		}
-					//	}
-					//	else if (yMax.state == stencil.fillType)
-					//	{
-					//		if (yMin.position.y <= stencil.YStart && yMax.position.y >= stencil.YStart)
-					//		{
-					//			if (yMin.yEdge == float.MinValue || yMin.yEdge > stencil.YStart)
-					//			{
-					//				yMin.yEdge = stencil.YStart;
-					//				yMin.yNormal = new float2(0f, stencil.fillType ? -1f : 1f);
-					//			}
-					//		}
-					//	}
-					//}
-
 					barrier.AddComponent<TriangulateTag>(entityInQueryIndex, entity);
 				}).Schedule(inputDeps);
 
 			m_Barrier.AddJobHandleForProducer(updateVoxelHandle);
 
 			return updateVoxelHandle;
+		}
+
+		//[BurstCompile]
+		private static void handleCircleX(ref BufferFromEntity<Voxel> voxelBuffer, ref DynamicBuffer<Voxel> buffer, ref VoxelStencilInput stencil, Entity xNeighbor, int x, int y, int i)
+		{
+			if (x > 0 && !stencil.InRange(buffer[i - 1].position))
+			{
+				Voxel v1 = buffer[i];
+				Voxel v2 = buffer[i - 1];
+
+				var D = math.pow(stencil.radius, 2) - math.pow(v1.position.y - stencil.centerY, 2);
+				if (D > 0)
+				{
+					var d = math.sqrt(D);
+					var cx1 = stencil.centerX - d;
+					Debug.Assert(v2.position.x < cx1 && cx1 < v1.position.x);
+					if (v2.xEdge == float.MinValue || v2.xEdge > cx1)
+						v2.xEdge = cx1;
+				}
+				else
+				{
+					v2.xEdge = float.MinValue;
+				}
+				buffer[i - 1] = v2;
+			}
+			if (x < LevelComponent.VoxelResolution - 1 && !stencil.InRange(buffer[i + 1].position))
+			{
+				Voxel v1 = buffer[i + 1];
+				Voxel v2 = buffer[i];
+
+				var D = math.pow(stencil.radius, 2) - math.pow(v1.position.y - stencil.centerY, 2);
+				if (D > 0)
+				{
+					var d = math.sqrt(D);
+					var cx1 = stencil.centerX + d;
+					Debug.Assert(v2.position.x < cx1 && cx1 < v1.position.x);
+					if (v2.xEdge == float.MinValue || v2.xEdge < cx1)
+						v2.xEdge = cx1;
+				}
+				else
+				{
+					v2.xEdge = float.MinValue;
+				}
+				buffer[i] = v2;
+			}
+			else if (x == LevelComponent.VoxelResolution - 1)
+			{
+
+			}
+		}
+		[BurstCompile]
+		private static void handleCircleY(ref BufferFromEntity<Voxel> voxelBuffer, ref DynamicBuffer<Voxel> buffer, ref VoxelStencilInput stencil, Entity yNeighbor, int x, int y, int i)
+		{
+			if (y > 0 && !stencil.InRange(buffer[i - LevelComponent.VoxelResolution].position))
+			{
+				Voxel v1 = buffer[i];
+				Voxel v2 = buffer[i - LevelComponent.VoxelResolution];
+
+				var D = math.sqrt(math.pow(stencil.radius, 2) - math.pow(v1.position.x - stencil.centerX, 2));
+
+				if (D > 0)
+				{
+					var d = math.sqrt(D);
+					var cy1 = stencil.centerY + d;
+					if (v2.yEdge == float.MinValue || v2.yEdge > cy1)
+						v2.yEdge = cy1;
+				} else
+				{
+					v2.yEdge = float.MinValue;
+				}
+				buffer[i - LevelComponent.VoxelResolution] = v2;
+			}
+			else if (y == 0 && yNeighbor != Entity.Null)
+			{
+				
+			}
+
+			if (y < LevelComponent.VoxelResolution - 1 && !stencil.InRange(buffer[i + LevelComponent.VoxelResolution].position))
+			{
+				Voxel v1 = buffer[i + LevelComponent.VoxelResolution];
+				Voxel v2 = buffer[i];
+
+				var D = math.sqrt(math.pow(stencil.radius, 2) - math.pow(v1.position.x - stencil.centerX, 2));
+
+				if (D > 0)
+				{
+					var d = math.sqrt(D);
+					var cy1 = stencil.centerY - d;
+					if (v2.yEdge == float.MinValue || v2.yEdge < cy1)
+						v2.yEdge = cy1;
+				}
+				else
+				{
+					v2.yEdge = float.MinValue;
+				}
+				buffer[i] = v2;
+			}
+		}
+
+		[BurstCompile]
+		private static void handleSquareX(ref BufferFromEntity<Voxel> voxelBuffer, ref DynamicBuffer<Voxel> buffer, ref VoxelStencilInput stencil, Entity xNeighbor, int x, int y, int i)
+		{
+			if (x > 0 && !stencil.InRange(buffer[i - 1].position))
+			{
+				var v = buffer[i - 1];
+				if (buffer[i - 1].state != stencil.fillType)
+				{
+					if (v.xEdge == float.MinValue || v.xEdge > stencil.XStart)
+						v.xEdge = stencil.XStart;
+				}
+				else
+				{
+					v.xEdge = float.MinValue;
+				}
+				buffer[i - 1] = v;
+			}
+
+			if (x < LevelComponent.VoxelResolution - 1 && !stencil.InRange(buffer[i + 1].position))
+			{
+				var v = buffer[i];
+				if (buffer[i + 1].state != stencil.fillType)
+				{
+					if (v.xEdge == float.MinValue || v.xEdge < stencil.XEnd)
+						v.xEdge = stencil.XEnd;
+				}
+				else
+				{
+					v.xEdge = float.MinValue;
+				}
+				buffer[i] = v;
+			}
+			else if (x == LevelComponent.VoxelResolution - 1 && xNeighbor != Entity.Null)
+			{
+				var voxel = buffer[i];
+				var neighourBuffer = voxelBuffer[xNeighbor];
+				var otherDude = neighourBuffer[y * LevelComponent.VoxelResolution];
+				if (!stencil.InRange(otherDude.position))
+				{
+					if (otherDude.state != stencil.fillType)
+					{
+						if (voxel.xEdge == float.MinValue || voxel.xEdge < stencil.XEnd)
+							voxel.xEdge = stencil.XEnd;
+					}
+					else
+					{
+						voxel.xEdge = float.MinValue;
+					}
+					buffer[i] = voxel;
+				}
+			}
+
+		}
+
+		[BurstCompile]
+		private static void handleSquareY(ref BufferFromEntity<Voxel> voxelBuffer, ref DynamicBuffer<Voxel> buffer, ref VoxelStencilInput stencil, Entity yNeighbor, int x, int y, int i)
+		{
+			if (y > 0 && !stencil.InRange(buffer[i - LevelComponent.VoxelResolution].position))
+			{
+				int index = i - LevelComponent.VoxelResolution;
+				var v = buffer[index];//.Copy(buffer[index].state);
+				if (buffer[index].state != stencil.fillType)
+				{
+					if (v.yEdge == float.MinValue || v.yEdge > stencil.YStart)
+						v.yEdge = stencil.YStart;
+				}
+				else
+				{
+					v.yEdge = float.MinValue;
+				}
+				buffer[index] = v;
+			}
+			else if (y == 0 && yNeighbor != Entity.Null)
+			{
+				var neighourBuffer = voxelBuffer[yNeighbor];
+				var otherDude = neighourBuffer[LevelComponent.VoxelResolution * (LevelComponent.VoxelResolution - 1) + x];
+				if (!stencil.InRange(otherDude.position))
+				{
+					if (otherDude.state != stencil.fillType)
+					{
+						if (otherDude.yEdge == float.MinValue || otherDude.yEdge > stencil.YStart)
+							otherDude.yEdge = stencil.YStart;
+					}
+					else
+					{
+						otherDude.yEdge = float.MinValue;
+					}
+					neighourBuffer[LevelComponent.VoxelResolution * (LevelComponent.VoxelResolution - 1) + x] = otherDude;
+				}
+			}
+
+			if (y < LevelComponent.VoxelResolution - 1 && !stencil.InRange(buffer[i + LevelComponent.VoxelResolution].position))
+			{
+				int index = i + LevelComponent.VoxelResolution;
+				var v = buffer[i].Copy(buffer[i].state);
+				if (buffer[index].state != stencil.fillType)
+				{
+					if (v.yEdge == float.MinValue || v.yEdge < stencil.YEnd)
+						v.yEdge = stencil.YEnd;
+				}
+				else
+				{
+					v.yEdge = float.MinValue;
+				}
+				buffer[i] = v;
+			}
 		}
 	}
 
