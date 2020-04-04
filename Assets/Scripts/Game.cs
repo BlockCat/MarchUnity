@@ -14,7 +14,9 @@ public class Game : ComponentSystem
 	protected override void OnCreate()
 	{
 		var c = EntityManager.CreateEntity(typeof(InitGameComponent));
+#if UNITY_EDITOR
 		EntityManager.SetName(c, "InitGameEntity");
+#endif
 		RequireSingletonForUpdate<InitGameComponent>();
 	}
 	protected override void OnUpdate()
@@ -36,7 +38,7 @@ public class Game : ComponentSystem
 			else if (world.GetExistingSystem<ServerSimulationSystemGroup>() != null)
 			{
 				Debug.Log("Loading server");
-				NetworkEndPoint ep = NetworkEndPoint.AnyIpv4;
+				NetworkEndPoint ep = NetworkEndPoint.AnyIpv4;				
 				ep.Port = 7979;
 				network.Listen(ep);
 			}

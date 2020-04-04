@@ -38,7 +38,9 @@ namespace Client
 			EntityManager.DestroyEntity(entity);
 			var level = LevelComponent.Create(request.Size, request.ChunkResolution);
 			var created = EntityManager.CreateEntity();
+#if UNITY_EDITOR
 			EntityManager.SetName(created, "LevelInformationEntity");
+#endif
 			EntityManager.AddComponentData(created, level);
 			EntityManager.AddComponentData(created, new Translation { Value = request.Position });
 			EntityManager.AddComponentData(created, new Rotation { Value = request.Rotation });
@@ -54,7 +56,10 @@ namespace Client
 				{
 					var chunkEntity = EntityManager.CreateEntity();
 					neighbours[x, y] = chunkEntity;
+
+#if UNITY_EDITOR
 					EntityManager.SetName(chunkEntity, $"Chunk_{x}_{y}");
+#endif
 
 					Entity left = x < request.ChunkResolution - 1 ? neighbours[x + 1, y] : Entity.Null;
 					Entity up = y < request.ChunkResolution - 1 ? neighbours[x, y + 1] : Entity.Null;
