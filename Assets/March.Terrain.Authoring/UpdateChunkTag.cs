@@ -5,13 +5,13 @@ using System.Text;
 using System.Threading.Tasks;
 using Unity.Entities;
 
-namespace Mixed
+namespace March.Terrain.Authoring
 {
 	public struct UpdateChunkTag : IComponentData
 	{
 		public VoxelStencilInput input;
 	}
 
-	public struct TriangulateTag : IComponentData { }
 	public struct MeshAssignTag : IComponentData { }
+	public struct TriangulateTag : IComponentData { }
 }

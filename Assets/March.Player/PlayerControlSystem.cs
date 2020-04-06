@@ -1,14 +1,12 @@
 ﻿using Assets.March.Player.Authoring;
 using Assets.March.Core;
-using Mixed;
 using Unity.Entities;
-
-using Unity.Mathematics;
 using Unity.NetCode;
 using Unity.Networking.Transport;
 using Unity.Transforms;
 using UnityEngine;
 using Unity.Jobs;
+using March.Terrain.Authoring;
 
 namespace Assets.March.Player
 {
@@ -163,6 +161,7 @@ namespace Assets.March.Player
 						Debug.DrawLine(t.Value, (Vector3)t.Value + new Vector3(0, -1, 0), Color.red);
 						Debug.DrawLine(t.Value, (Vector3)t.Value + new Vector3(1, 0, 0), Color.red);
 						Debug.DrawLine(t.Value, (Vector3)t.Value + new Vector3(-1, 0, 0), Color.red);*/
+						
 						var stencilEntity = barrier.CreateEntity(entityInQueryIndex);
 						barrier.AddComponent(entityInQueryIndex, stencilEntity, new VoxelStencilInput
 						{
@@ -178,35 +177,6 @@ namespace Assets.March.Player
 
 				return handle;
 			}
-		}
-
-		/*[UpdateInGroup(typeof(GhostPredictionSystemGroup))]
-		public class ShootPlayerSystem : ComponentSystem
-		{
-			protected override void OnCreate()
-			{
-				RequireForUpdate(GetEntityQuery(typeof(PlayerTag)));
-			}
-			protected override void OnUpdate()
-			{
-				var group = World.GetExistingSystem<GhostPredictionSystemGroup>();
-				var tick = group.PredictingTick;
-				var deltaTime = Time.DeltaTime;
-
-				Entities.ForEach((DynamicBuffer<Player.Input> inputBuffer, ref Translation t, ref PredictedGhostComponent prediction) =>
-				{
-					if (!GhostPredictionSystemGroup.ShouldPredict(tick, prediction))
-						return;
-
-					
-					Player.Input input;
-					inputBuffer.GetDataAtTick(tick, out input);
-
-					
-				});
-			}
-		}*/
+		}		
 	}
-
-
 }

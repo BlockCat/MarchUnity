@@ -1,4 +1,5 @@
-﻿using System;
+﻿using March.Terrain.Authoring;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,7 +11,7 @@ using Unity.Mathematics;
 using Unity.Transforms;
 using UnityEngine;
 
-namespace Mixed
+namespace March.Terrain
 {
 	class ApplyStencilSystem : JobComponentSystem
 	{

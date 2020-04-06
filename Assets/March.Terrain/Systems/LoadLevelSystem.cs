@@ -1,4 +1,4 @@
-﻿using Mixed;
+﻿
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,14 +11,19 @@ using Unity.Rendering;
 using Unity.Transforms;
 using Unity.Mathematics;
 using UnityEditor;
+using Unity.NetCode;
+using March.Terrain.Authoring;
 
-namespace Client
+namespace March.Terrain
 {
+
+	[UpdateInGroup(typeof(ServerSimulationSystemGroup))]
 	public class LoadLevelSystem : ComponentSystem
 	{
 		private BeginSimulationEntityCommandBufferSystem m_Barrier;
 
 		private Material chunkMaterial;
+		private Entity chunkPrefabEntity;
 
 		protected override void OnCreate()
 		{
@@ -26,7 +31,6 @@ namespace Client
 
 			chunkMaterial = Resources.Load<Material>("Chunk");
 			if (chunkMaterial == null) throw new Exception("Resource was not found");
-			Debug.LogWarning(chunkMaterial.GetType().Name);
 		}
 		protected override void OnUpdate()
 		{
@@ -46,6 +50,14 @@ namespace Client
 			EntityManager.AddComponentData(created, new Rotation { Value = request.Rotation });
 			EntityManager.AddComponentData(created, new LocalToWorld());
 
+			var ghostCollection = GetSingleton<GhostPrefabCollectionComponent>();
+
+			// Find the id of the sphere prefab (our player)
+			var ghostId = MarchingSquaresGhostSerializerCollection.FindGhostType<VoxelGridSnapshotData>();
+
+			// Get the prefab entity from ... server prefabs?
+			chunkPrefabEntity = EntityManager.GetBuffer<GhostPrefabBuffer>(ghostCollection.serverPrefabs)[ghostId].Value;
+
 			var random = new Unity.Mathematics.Random();
 			random.InitState(1231231453);
 
@@ -54,7 +66,7 @@ namespace Client
 			{
 				for (int x = request.ChunkResolution - 1; x >= 0; x--)
 				{
-					var chunkEntity = EntityManager.CreateEntity();
+					var chunkEntity = EntityManager.Instantiate(chunkPrefabEntity);
 					neighbours[x, y] = chunkEntity;
 
 #if UNITY_EDITOR
@@ -64,7 +76,7 @@ namespace Client
 					Entity left = x < request.ChunkResolution - 1 ? neighbours[x + 1, y] : Entity.Null;
 					Entity up = y < request.ChunkResolution - 1 ? neighbours[x, y + 1] : Entity.Null;
 					Entity diag = y < request.ChunkResolution - 1 && x < request.ChunkResolution - 1 ? neighbours[x + 1, y + 1] : Entity.Null;
-					EntityManager.AddComponentData(chunkEntity, new ChunkComponent
+					EntityManager.SetComponentData(chunkEntity, new ChunkComponent
 					{
 						Size = level.chunkSize,
 						x = x,
@@ -103,7 +115,7 @@ namespace Client
 						castShadows = UnityEngine.Rendering.ShadowCastingMode.Off,
 
 					});
-					var voxelBuffer = EntityManager.AddBuffer<Mixed.Voxel>(chunkEntity);
+					var voxelBuffer = EntityManager.AddBuffer<VoxelBuffer>(chunkEntity);
 
 					for (int vy = 0; vy < LevelComponent.VoxelResolution; vy++)
 					{
@@ -111,7 +123,7 @@ namespace Client
 						{
 							bool st = random.NextBool();//(vx + vy) % 2 == 0;
 							st = true;
-							voxelBuffer.Add(new Mixed.Voxel(st, vx, vy, level.voxelSize));
+							voxelBuffer.Add(new Voxel(st, vx, vy, level.voxelSize));
 						}
 					}
 				}

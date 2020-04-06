@@ -1,47 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Unity.Collections;
-using Unity.Entities;
+﻿using Unity.Entities;
 using Unity.Mathematics;
-using UnityEngine;
 
-namespace Mixed
+namespace March.Terrain.Authoring
 {
-	public struct LevelComponent : IComponentData
-	{
-		public const int VoxelResolution = 16;
-		public float Size, chunkSize, voxelSize, halfSize;
-		public int ChunkResolution;
 
-		public static LevelComponent Create(float size, int chunkResolution)
-		{
-			var chunkSize = size / chunkResolution;
-			return new LevelComponent
-			{
-				Size = size,
-				halfSize = size * 0.5f,
-				chunkSize = chunkSize,
-				voxelSize = chunkSize / VoxelResolution,
-				ChunkResolution = chunkResolution,
-			};
-		}
-	}
-
-	public struct ChunkComponent : IComponentData
-	{
-		public float Size;
-		public int x;
-		public int y;
-		public Entity leftNeighbour;
-		public Entity upNeighbour;
-		public Entity diagNeighbour;
-	}
-
-	[InternalBufferCapacity(LevelComponent.VoxelResolution * LevelComponent.VoxelResolution)]
-	public struct Voxel : IBufferElementData
+	public struct Voxel
 	{
 		public bool state {
 			get => typeState == 1;
@@ -65,7 +28,7 @@ namespace Mixed
 			yEdge = 0;// float.MinValue;
 			xEdge = position.x + 0.5f * size;// float.MinValue;
 			yEdge = position.y + 0.5f * size;
-			
+
 			xNormal = float2.zero;
 			yNormal = float2.zero;
 		}
@@ -126,4 +89,6 @@ namespace Mixed
 			};
 		}
 	}
+
+
 }

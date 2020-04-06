@@ -1,5 +1,4 @@
-﻿using Mixed;
-
+﻿using March.Terrain.Authoring;
 using System.Linq;
 
 using Unity.Burst;
@@ -11,7 +10,7 @@ using Unity.NetCode;
 using Unity.Rendering;
 using UnityEngine;
 
-namespace Assets.March.Terrain.Systems
+namespace March.Terrain
 {
 	[InternalBufferCapacity(LevelComponent.VoxelResolution * LevelComponent.VoxelResolution * 3)]
 	struct IntBuffer : IBufferElementData
@@ -47,7 +46,7 @@ namespace Assets.March.Terrain.Systems
 
 
 		#region triangulation
-	
+
 		[BurstCompile]
 		private static void AddTriangle(int a, int b, int c, ref DynamicBuffer<IntBuffer> triangles)
 		{
@@ -87,7 +86,7 @@ namespace Assets.March.Terrain.Systems
 		{
 			inputDeps.Complete();
 			var barrier = m_Barrier.CreateCommandBuffer().ToConcurrent();
-			var bfe = m_Barrier.GetBufferFromEntity<Mixed.Voxel>(true);
+			var bfe = m_Barrier.GetBufferFromEntity<VoxelBuffer>(true);
 			var level = GetSingleton<LevelComponent>();
 			var handle = Entities
 				.WithBurst()
@@ -136,7 +135,7 @@ namespace Assets.March.Terrain.Systems
 						}
 						if (xNeighbour != Entity.Null)
 						{
-							var n = bfe[xNeighbour][0].CopyDummyX(chunkSize);
+							var n = bfe[xNeighbour][0].Value.CopyDummyX(chunkSize);
 							CacheNextEdgeAndCorner(i * 2, voxels[i], n);
 						}
 					}
@@ -221,9 +220,9 @@ namespace Assets.March.Terrain.Systems
 						var voxels = bfe[entity];
 						int cacheIndex = (LevelComponent.VoxelResolution - 1) * 2;
 						var a = voxels[i];
-						var b = bfe[xNeighbour][i + 1 - LevelComponent.VoxelResolution].CopyDummyX(chunkSize);
+						var b = bfe[xNeighbour][i + 1 - LevelComponent.VoxelResolution].Value.CopyDummyX(chunkSize);
 						var c = voxels[i + LevelComponent.VoxelResolution];
-						var d = bfe[xNeighbour][i + 1].CopyDummyX(chunkSize);
+						var d = bfe[xNeighbour][i + 1].Value.CopyDummyX(chunkSize);
 
 						CacheNextEdgeAndCorner(cacheIndex, voxels[i + LevelComponent.VoxelResolution], d);
 						CacheNextMiddleEdge(b, d);
@@ -239,7 +238,7 @@ namespace Assets.March.Terrain.Systems
 						var voxels = bfe[entity];
 						var neighbourVoxels = bfe[yNeighbour];
 
-						var dummyY = neighbourVoxels[0].CopyDummyY(chunkSize);
+						var dummyY = neighbourVoxels[0].Value.CopyDummyY(chunkSize);
 
 						SwapRowCaches();
 						CacheFirstCorner(dummyY);
@@ -248,7 +247,7 @@ namespace Assets.March.Terrain.Systems
 						for (int x = 0; x < cells; x++)
 						{
 							var dummyT = dummyY.CopyDummyX(0);
-							dummyY = neighbourVoxels[x + 1].CopyDummyY(chunkSize);
+							dummyY = neighbourVoxels[x + 1].Value.CopyDummyY(chunkSize);
 							var cacheIndex = x * 2;
 							CacheNextEdgeAndCorner(cacheIndex, dummyT, dummyY);
 							CacheNextMiddleEdge(voxels[x + offset + 1], dummyY);
@@ -259,11 +258,11 @@ namespace Assets.March.Terrain.Systems
 						{
 							var leftVoxels = bfe[xNeighbour];
 							var a = voxels[voxels.Length - 1];
-							var b = leftVoxels[leftVoxels.Length - LevelComponent.VoxelResolution].CopyDummyX(chunkSize);
-							var c = neighbourVoxels[LevelComponent.VoxelResolution - 1].CopyDummyY(chunkSize);
-							var d = bfe[xyNeighbour][0].CopyDummyXY(chunkSize);
-							Debug.Assert(a.position.x == c.position.x);
-							Debug.Assert(a.position.y == b.position.y);
+							var b = leftVoxels[leftVoxels.Length - LevelComponent.VoxelResolution].Value.CopyDummyX(chunkSize);
+							var c = neighbourVoxels[LevelComponent.VoxelResolution - 1].Value.CopyDummyY(chunkSize);
+							var d = bfe[xyNeighbour][0].Value.CopyDummyXY(chunkSize);
+							Debug.Assert(a.Value.position.x == c.position.x);
+							Debug.Assert(a.Value.position.y == b.position.y);
 							Debug.Assert(b.position.x == d.position.x);
 							Debug.Assert(c.position.y == d.position.y);
 							var cacheIndex = cells * 2;

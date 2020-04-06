@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
-using Mixed;
+
 /*
 [SelectionBase]
 public class VoxelGrid : MonoBehaviour
