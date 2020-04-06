@@ -15,7 +15,6 @@ GameObject:
   - component: {fileID: 4210053635758036669}
   - component: {fileID: 840277360087171086}
   - component: {fileID: 5800170251485561155}
-  - component: {fileID: 7922144948250171653}
   m_Layer: 0
   m_Name: VoxelGrid
   m_TagString: Untagged
@@ -148,17 +147,6 @@ MonoBehaviour:
       interpolate: 0
     manualFieldList: 0
     entityIndex: 0
-  - name: March.Terrain.Authoring.VoxelBuffer
-    interpolatedClient: 1
-    predictedClient: 1
-    server: 1
-    sendDataTo: 0
-    fields:
-    - name: Value
-      quantization: -1
-      interpolate: 0
-    manualFieldList: 0
-    entityIndex: 0
   - name: Unity.Rendering.PerInstanceCullingTag
     interpolatedClient: 1
     predictedClient: 1
@@ -232,15 +220,3 @@ MonoBehaviour:
   leftNeighbour: {fileID: 0}
   upNeighbour: {fileID: 0}
   diagNeighbour: {fileID: 0}
---- !u!114 &7922144948250171653
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 100000}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 577b9e1a3363c354c8db6a7ec506ac92, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 

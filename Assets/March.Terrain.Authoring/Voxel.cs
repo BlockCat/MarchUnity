@@ -1,9 +1,11 @@
-﻿using Unity.Entities;
+﻿using System;
+using Unity.Entities;
 using Unity.Mathematics;
 
 namespace March.Terrain.Authoring
 {
 
+	[Serializable]
 	public struct Voxel
 	{
 		public bool state {

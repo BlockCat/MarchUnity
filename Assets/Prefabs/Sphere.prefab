@@ -155,7 +155,7 @@ MonoBehaviour:
       interpolate: 0
     manualFieldList: 0
     entityIndex: 0
-  - name: Assets.March.Player.PlayerTag
+  - name: PlayerTag
     interpolatedClient: 1
     predictedClient: 1
     server: 1

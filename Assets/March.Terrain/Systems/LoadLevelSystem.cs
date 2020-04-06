@@ -115,8 +115,8 @@ namespace March.Terrain
 						castShadows = UnityEngine.Rendering.ShadowCastingMode.Off,
 
 					});
-					var voxelBuffer = EntityManager.AddBuffer<VoxelBuffer>(chunkEntity);
 
+					var voxelBuffer = EntityManager.AddBuffer<VoxelBuffer>(chunkEntity);
 					for (int vy = 0; vy < LevelComponent.VoxelResolution; vy++)
 					{
 						for (int vx = 0; vx < LevelComponent.VoxelResolution; vx++)
