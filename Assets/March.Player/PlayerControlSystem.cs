@@ -7,6 +7,7 @@ using Unity.Transforms;
 using UnityEngine;
 using Unity.Jobs;
 using March.Terrain.Authoring;
+using Unity.Mathematics;
 
 namespace Assets.March.Player
 {
@@ -138,7 +139,7 @@ namespace Assets.March.Player
 
 				var handle = Entities
 					.WithBurst()
-					.ForEach((Entity entity, int entityInQueryIndex, DynamicBuffer<Player.Input> inputBuffer, ref Translation t, ref PredictedGhostComponent prediction) =>
+					.ForEach((Entity entity, int entityInQueryIndex, DynamicBuffer<Player.Input> inputBuffer, ref Translation t, ref Rotation r, ref PredictedGhostComponent prediction) =>
 				{
 					if (!GhostPredictionSystemGroup.ShouldPredict(tick, prediction))
 						return;
@@ -147,9 +148,16 @@ namespace Assets.March.Player
 					inputBuffer.GetDataAtTick(tick, out input);
 
 					if (input.Left)
+					{
 						t.Value.x += 4 * deltaTime;
+						r.Value = quaternion.identity;
+					}
+
 					if (input.Right)
+					{
 						t.Value.x -= 4 * deltaTime;
+						r.Value = quaternion.RotateY(math.PI);
+					}
 					if (input.Up)
 						t.Value.y += 4 * deltaTime;
 					if (input.Down)
@@ -161,7 +169,7 @@ namespace Assets.March.Player
 						Debug.DrawLine(t.Value, (Vector3)t.Value + new Vector3(0, -1, 0), Color.red);
 						Debug.DrawLine(t.Value, (Vector3)t.Value + new Vector3(1, 0, 0), Color.red);
 						Debug.DrawLine(t.Value, (Vector3)t.Value + new Vector3(-1, 0, 0), Color.red);*/
-						
+
 						var stencilEntity = barrier.CreateEntity(entityInQueryIndex);
 						barrier.AddComponent(entityInQueryIndex, stencilEntity, new VoxelStencilInput
 						{
@@ -177,6 +185,6 @@ namespace Assets.March.Player
 
 				return handle;
 			}
-		}		
+		}
 	}
 }
