@@ -97,7 +97,7 @@ public class GoInGameServerSystem : ComponentSystem
 				EntityManager.SetComponentData(player, new MovablePlayerComponent { PlayerId = playerId });
 
 				// Allow the player to receive and handle inputs
-				PostUpdateCommands.AddBuffer<Player.Input>(player);
+				PostUpdateCommands.AddBuffer<PlayerInput>(player);
 
 				// Add which entity contains the command stream
 				PostUpdateCommands.SetComponent(reqSrc.SourceConnection, new CommandTargetComponent { targetEntity = player });

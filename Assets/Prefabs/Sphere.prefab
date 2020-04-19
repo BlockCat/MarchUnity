@@ -62,8 +62,7 @@ MeshRenderer:
   m_RayTracingMode: 2
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
-  m_Materials:
-  - {fileID: 2100000, guid: 9783bbe8d0480c1449337f04dbbcf481, type: 2}
+  m_Materials: []
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -239,10 +238,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5daf5c92b33545545a8e3df6a7dece13, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  State: 1
-  FrameCount: 24
   material: {fileID: 2100000, guid: 9783bbe8d0480c1449337f04dbbcf481, type: 2}
-  frameDuration: 0.2
   data:
   - offset: 0
     count: 4
