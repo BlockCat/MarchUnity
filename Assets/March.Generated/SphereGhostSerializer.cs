@@ -3,14 +3,21 @@ using Unity.Entities;
 using Unity.Collections;
 using Unity.NetCode;
 using Assets.March.Player.Authoring;
+using Unity.Physics;
 using Unity.Transforms;
 
 public struct SphereGhostSerializer : IGhostSerializer<SphereSnapshotData>
 {
     private ComponentType componentTypeMovablePlayerComponent;
     private ComponentType componentTypePlayerTag;
+    private ComponentType componentTypeRequestFreeze;
+    private ComponentType componentTypePhysicsCollider;
+    private ComponentType componentTypePhysicsDamping;
+    private ComponentType componentTypePhysicsGravityFactor;
+    private ComponentType componentTypePhysicsMass;
+    private ComponentType componentTypePhysicsVelocity;
+    private ComponentType componentTypeCompositeScale;
     private ComponentType componentTypeLocalToWorld;
-    private ComponentType componentTypeNonUniformScale;
     private ComponentType componentTypeRotation;
     private ComponentType componentTypeTranslation;
     // FIXME: These disable safety since all serializers have an instance of the same type - causing aliasing. Should be fixed in a cleaner way
@@ -29,8 +36,14 @@ public struct SphereGhostSerializer : IGhostSerializer<SphereSnapshotData>
     {
         componentTypeMovablePlayerComponent = ComponentType.ReadWrite<MovablePlayerComponent>();
         componentTypePlayerTag = ComponentType.ReadWrite<PlayerTag>();
+        componentTypeRequestFreeze = ComponentType.ReadWrite<RequestFreeze>();
+        componentTypePhysicsCollider = ComponentType.ReadWrite<PhysicsCollider>();
+        componentTypePhysicsDamping = ComponentType.ReadWrite<PhysicsDamping>();
+        componentTypePhysicsGravityFactor = ComponentType.ReadWrite<PhysicsGravityFactor>();
+        componentTypePhysicsMass = ComponentType.ReadWrite<PhysicsMass>();
+        componentTypePhysicsVelocity = ComponentType.ReadWrite<PhysicsVelocity>();
+        componentTypeCompositeScale = ComponentType.ReadWrite<CompositeScale>();
         componentTypeLocalToWorld = ComponentType.ReadWrite<LocalToWorld>();
-        componentTypeNonUniformScale = ComponentType.ReadWrite<NonUniformScale>();
         componentTypeRotation = ComponentType.ReadWrite<Rotation>();
         componentTypeTranslation = ComponentType.ReadWrite<Translation>();
         ghostMovablePlayerComponentType = system.GetArchetypeChunkComponentType<MovablePlayerComponent>(true);

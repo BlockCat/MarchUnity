@@ -11,6 +11,6 @@ namespace March.Terrain.Authoring
 		[GhostDefaultField] public int y;
 		public Entity leftNeighbour;
 		public Entity upNeighbour;
-		public Entity diagNeighbour;
+		public Entity diagNeighbour;		
 	}
 }

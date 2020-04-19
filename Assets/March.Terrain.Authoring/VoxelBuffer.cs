@@ -13,8 +13,6 @@ namespace March.Terrain.Authoring
 	[GenerateAuthoringComponent]
 	public struct VoxelBuffer : IBufferElementData
 	{
-
-		[GhostDefaultField]
 		public Voxel Value;
 
 		public static implicit operator Voxel(VoxelBuffer e) => e.Value;

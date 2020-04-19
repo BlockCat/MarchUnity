@@ -3,7 +3,7 @@ using Unity.NetCode;
 using Unity.Transforms;
 using Unity.Jobs;
 using March.Terrain.Authoring;
-using March.Core.Sprite;
+using Unity.Physics;
 
 namespace Assets.March.Player
 {
@@ -24,12 +24,11 @@ namespace Assets.March.Player
 			var group = World.GetExistingSystem<GhostPredictionSystemGroup>();
 			var tick = group.PredictingTick;
 			var deltaTime = Time.DeltaTime;
-
-			var speed = 2f;
+			
 
 			Entities
 				.WithBurst()
-				.ForEach((Entity entity, int entityInQueryIndex, DynamicBuffer<Player.PlayerInput> inputBuffer, ref Translation t, ref SpriteInformation sd, ref PredictedGhostComponent prediction) =>
+				.ForEach((Entity entity, int entityInQueryIndex, DynamicBuffer<PlayerInput> inputBuffer, ref PhysicsVelocity v, ref PredictedGhostComponent prediction, in Translation t, in PlayerTag player) =>
 			{
 				if (!GhostPredictionSystemGroup.ShouldPredict(tick, prediction))
 					return;
@@ -38,13 +37,15 @@ namespace Assets.March.Player
 				inputBuffer.GetDataAtTick(tick, out input);
 
 				if (input.Left)
-					t.Value.x += speed * deltaTime;
+					v.Linear.x = player.speed;
 				if (input.Right)
-					t.Value.x -= speed * deltaTime;
+					v.Linear.x = -player.speed;
+
 				if (input.Up)
-					t.Value.y += speed * deltaTime;
-				if (input.Down)
-					t.Value.y -= speed * deltaTime;
+					v.Linear.y = player.jumpForce;
+				
+				//if (input.Down)
+				// t.Value.y -= speed;
 
 				if (input.Shoot)
 				{

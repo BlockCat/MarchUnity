@@ -11,7 +11,6 @@ GameObject:
   - component: {fileID: 400000}
   - component: {fileID: 3300000}
   - component: {fileID: 2300000}
-  - component: {fileID: -6544678390992208789}
   - component: {fileID: 4210053635758036669}
   - component: {fileID: 840277360087171086}
   - component: {fileID: 5800170251485561155}
@@ -83,20 +82,6 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
---- !u!64 &-6544678390992208789
-MeshCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 100000}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Convex: 0
-  m_CookingOptions: 0
-  m_Mesh: {fileID: 0}
 --- !u!114 &4210053635758036669
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -145,7 +130,7 @@ MonoBehaviour:
     - name: y
       quantization: -1
       interpolate: 0
-    manualFieldList: 0
+    manualFieldList: 1
     entityIndex: 0
   - name: Unity.Rendering.PerInstanceCullingTag
     interpolatedClient: 1

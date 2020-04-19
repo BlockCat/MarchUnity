@@ -35,6 +35,7 @@ namespace March.Core.Sprite
 			{
 				material = this.material
 			});
+
 		}
 	}
 

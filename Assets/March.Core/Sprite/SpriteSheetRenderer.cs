@@ -53,13 +53,15 @@ namespace March.Core.Sprite
 
 		protected override void OnUpdate()
 		{
+			var buffer = GetBufferFromEntity<FrameData>(true);
 			Entities
 				.WithoutBurst()
-				.ForEach((Entity entity, DynamicBuffer<FrameData> dataBuffer, RenderMesh mesh, in SpriteInformation info, in Translation translation) =>
+				.WithReadOnly(buffer)				
+				.ForEach((Entity entity, RenderMesh mesh, in SpriteInformation info, in Translation translation) =>
 			{
+
 				MaterialPropertyBlock properties = new MaterialPropertyBlock();
-				var data = dataBuffer[info.animation];
-				
+				var data = buffer[entity][info.animation];
 				properties.SetInt("Vector1_4A447B85", data.offset);
 				properties.SetInt("Vector1_C85BB47D", data.count);
 
@@ -75,6 +77,7 @@ namespace March.Core.Sprite
 				Graphics.DrawMesh(quad, translation.Value, Quaternion.identity, mesh.material, 0, Camera.main, 0, properties, false, false);
 
 			}).Run();
+
 		}
 	}
 }

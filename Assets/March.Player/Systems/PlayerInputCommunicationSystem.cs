@@ -34,7 +34,7 @@ namespace Assets.March.Player
 
 		public override string ToString()
 		{
-			return $"[s:{Shoot}, u:{Up}, d:{Down}, l:{Left}, r:{Right} ({buttons})]";
+			return $"[s:{Shoot}, u:{Up}, d:{Down}, l:{Left}, r:{Right} state: ({buttons})]";
 		}
 
 		public void Deserialize(uint tick, ref DataStreamReader reader)

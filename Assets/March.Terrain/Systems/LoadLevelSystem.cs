@@ -13,6 +13,8 @@ using Unity.Mathematics;
 using UnityEditor;
 using Unity.NetCode;
 using March.Terrain.Authoring;
+using Unity.Collections;
+using Unity.Collections.LowLevel.Unsafe;
 
 namespace March.Terrain
 {
@@ -32,6 +34,8 @@ namespace March.Terrain
 			chunkMaterial = Resources.Load<Material>("Chunk");
 			if (chunkMaterial == null) throw new Exception("Resource was not found");
 		}
+
+
 		protected override void OnUpdate()
 		{
 			Debug.Log("Trying to load a level");
@@ -83,7 +87,7 @@ namespace March.Terrain
 						y = y,
 						leftNeighbour = left,
 						upNeighbour = up,
-						diagNeighbour = diag,
+						diagNeighbour = diag
 					});
 					var mesh = new Mesh();
 					mesh.vertices = new Vector3[4]
@@ -105,6 +109,7 @@ namespace March.Terrain
 					EntityManager.AddComponentData(chunkEntity, new Rotation { Value = quaternion.Euler(0, 0, 0) });
 					EntityManager.AddComponentData(chunkEntity, new LocalToParent());
 					EntityManager.AddComponentData(chunkEntity, new LocalToWorld());
+
 					EntityManager.AddSharedComponentData(chunkEntity, new RenderMesh
 					{
 						mesh = mesh,

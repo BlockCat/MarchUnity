@@ -1,22 +1,28 @@
-﻿
-using Assets.March.Player;
+﻿using Assets.March.Player;
 using Assets.March.Player.Authoring;
 using Unity.Entities;
 using Unity.NetCode;
 using Unity.Networking.Transport;
 using UnityEngine;
 
+
 [UpdateInWorld(UpdateInWorld.TargetWorld.Default)]
 public class Game : ComponentSystem
 {
 	struct InitGameComponent : IComponentData { };
 
+
+	protected override void OnDestroy()
+	{
+		base.OnDestroy();
+	}
 	protected override void OnCreate()
 	{
 		var c = EntityManager.CreateEntity(typeof(InitGameComponent));
 #if UNITY_EDITOR
 		EntityManager.SetName(c, "InitGameEntity");
 #endif
+
 		RequireSingletonForUpdate<InitGameComponent>();
 	}
 	protected override void OnUpdate()
@@ -30,15 +36,18 @@ public class Game : ComponentSystem
 			var network = world.GetExistingSystem<NetworkStreamReceiveSystem>();
 			if (world.GetExistingSystem<ClientSimulationSystemGroup>() != null)
 			{
-				NetworkEndPoint ep = NetworkEndPoint.LoopbackIpv4;
+				//var ep = NetworkEndPoint.Parse("2001:1c02:2f1a:c400:90f1:be4a:921f:0567", 7979, NetworkFamily.Ipv6);
+				var ep = NetworkEndPoint.LoopbackIpv4;
 				ep.Port = 7979;
 				network.Connect(ep);
 			}
-#if UNITY_EDITOR
+
+
+#if UNITY_EDITOR || UNITY_SERVER
 			else if (world.GetExistingSystem<ServerSimulationSystemGroup>() != null)
 			{
 				Debug.Log("Loading server");
-				NetworkEndPoint ep = NetworkEndPoint.AnyIpv4;				
+				NetworkEndPoint ep = NetworkEndPoint.AnyIpv4;
 				ep.Port = 7979;
 				network.Listen(ep);
 			}
