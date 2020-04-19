@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 2968715270883535364}
   - component: {fileID: 3427091171488438946}
   - component: {fileID: 5177657318173659085}
-  - component: {fileID: 6960724815093130537}
+  - component: {fileID: 6644674552399484553}
   m_Layer: 0
   m_Name: Sphere
   m_TagString: Untagged
@@ -52,7 +52,7 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3427091171488438949}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 2
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -227,7 +227,7 @@ MonoBehaviour:
     manualFieldList: 0
     entityIndex: 0
   doNotStrip: 0
---- !u!114 &6960724815093130537
+--- !u!114 &6644674552399484553
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -241,11 +241,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   State: 1
   FrameCount: 24
-  frameDuration: 0.1
+  material: {fileID: 2100000, guid: 9783bbe8d0480c1449337f04dbbcf481, type: 2}
+  frameDuration: 0.2
   data:
   - offset: 0
     count: 4
   - offset: 4
     count: 6
-  - offset: 10
-    count: 1

@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Unity.Entities;
 using Unity.Mathematics;
+using Unity.Rendering;
 using UnityEngine;
 
 namespace March.Core.Sprite
@@ -14,14 +15,9 @@ namespace March.Core.Sprite
 	[RequiresEntityConversion]
 	public class SpriteAnimation : MonoBehaviour, IConvertGameObjectToEntity
 	{
-		[MinValue(0)]
-		public int State;
-		[MinValue(0)]
-		public int FrameCount;
-
-		public float frameDuration = 0.2f;
-
+		public Material material;
 		public FrameData[] data;
+
 		public void Convert(Entity entity, EntityManager dstManager, GameObjectConversionSystem conversionSystem)
 		{
 			var buffer = dstManager.AddBuffer<FrameData>(entity);
@@ -29,16 +25,15 @@ namespace March.Core.Sprite
 			{
 				buffer.Add(x);
 			}
-
-			dstManager.AddComponentData(entity, new SpriteSheetAnimationData
+			dstManager.AddComponentData(entity, new SpriteInformation
 			{
-				state = State,
-				frameOffset = 0,
-				totalFrames = FrameCount,
-				currentFrame = 0,
-				frameTimer = 0f,
-				frameTimerMax = frameDuration,
-				offsetX = 0,
+				direction = SpriteInformation.Direction.LEFT,
+				animation = 0
+			});
+
+			dstManager.AddSharedComponentData(entity, new RenderMesh
+			{
+				material = this.material
 			});
 		}
 	}

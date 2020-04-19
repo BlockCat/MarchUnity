@@ -7,7 +7,7 @@ using Unity.Transforms;
 using UnityEngine;
 using Unity.Jobs;
 using March.Terrain.Authoring;
-using Unity.Mathematics;
+using March.Core.Sprite;
 
 namespace Assets.March.Player
 {
@@ -99,14 +99,16 @@ namespace Assets.March.Player
 					return;
 				}
 
+
+				var input = default(Player.Input);
+				input.tick = World.GetExistingSystem<ClientSimulationSystemGroup>().ServerTick;
+
+
 				var up = UnityEngine.Input.GetKey(KeyCode.W);
 				var left = UnityEngine.Input.GetKey(KeyCode.A);
 				var down = UnityEngine.Input.GetKey(KeyCode.S);
 				var right = UnityEngine.Input.GetKey(KeyCode.D);
 				var space = UnityEngine.Input.GetKey(KeyCode.Space);
-
-				var input = default(Player.Input);
-				input.tick = World.GetExistingSystem<ClientSimulationSystemGroup>().ServerTick;
 
 				input.Up = up;
 				input.Left = left;
@@ -114,14 +116,59 @@ namespace Assets.March.Player
 				input.Down = down;
 				input.Shoot = space;
 
+
 				var inputBuffer = EntityManager.GetBuffer<Player.Input>(localInput);
 				inputBuffer.AddCommandData(input);
 			}
 		}
 
+		[UpdateInGroup(typeof(ClientPresentationSystemGroup))]
+		public class UpdatePlayerSpriteSystem : SystemBase
+		{
+			protected override void OnUpdate()
+			{
+				var group = World.GetExistingSystem<GhostPredictionSystemGroup>();
+				var tick = group.PredictingTick;
+				Entities
+					.WithBurst()
+					.ForEach((DynamicBuffer<Player.Input> inputBuffer, ref SpriteInformation sd, ref PredictedGhostComponent prediction) =>
+					{
+						if (!GhostPredictionSystemGroup.ShouldPredict(tick, prediction))
+							return;
+
+						Player.Input input;
+						inputBuffer.GetDataAtTick(tick, out input);
+
+						if (input.Left && input.Right) {
+							sd.animation = 0;
+
+						}
+						else if (input.Left)
+						{
+							sd.direction = SpriteInformation.Direction.LEFT;
+							sd.animation = 1;
+						}
+						else if (input.Right)
+						{
+							sd.direction = SpriteInformation.Direction.RIGHT;
+							sd.animation = 1;
+						}
+						else
+						{
+							sd.animation = 0;
+						}
+
+						if (input.Down && input.Up)
+							sd.animation = 0;
+						else if (input.Down || input.Up)
+							sd.animation = 1;
+
+					}).ScheduleParallel();
+			}
+		}
 
 		[UpdateInGroup(typeof(GhostPredictionSystemGroup))]
-		public class MovePlayerSystem : JobComponentSystem
+		public class MovePlayerSystem : SystemBase
 		{
 			private BeginSimulationEntityCommandBufferSystem m_Barrier;
 
@@ -130,16 +177,18 @@ namespace Assets.March.Player
 				m_Barrier = World.GetOrCreateSystem<BeginSimulationEntityCommandBufferSystem>();
 				RequireForUpdate(GetEntityQuery(typeof(PlayerTag)));
 			}
-			protected override JobHandle OnUpdate(JobHandle inputDeps)
+			protected override void OnUpdate()
 			{
 				var barrier = m_Barrier.CreateCommandBuffer().ToConcurrent();
 				var group = World.GetExistingSystem<GhostPredictionSystemGroup>();
 				var tick = group.PredictingTick;
 				var deltaTime = Time.DeltaTime;
 
-				var handle = Entities
+				var speed = 2f;
+
+				Entities
 					.WithBurst()
-					.ForEach((Entity entity, int entityInQueryIndex, DynamicBuffer<Player.Input> inputBuffer, ref Translation t, ref Rotation r, ref PredictedGhostComponent prediction) =>
+					.ForEach((Entity entity, int entityInQueryIndex, DynamicBuffer<Player.Input> inputBuffer, ref Translation t, ref SpriteInformation sd, ref PredictedGhostComponent prediction) =>
 				{
 					if (!GhostPredictionSystemGroup.ShouldPredict(tick, prediction))
 						return;
@@ -149,19 +198,18 @@ namespace Assets.March.Player
 
 					if (input.Left)
 					{
-						t.Value.x += 4 * deltaTime;
-						r.Value = quaternion.identity;
+						t.Value.x += speed * deltaTime;
 					}
 
 					if (input.Right)
 					{
-						t.Value.x -= 4 * deltaTime;
-						r.Value = quaternion.RotateY(math.PI);
+						t.Value.x -= speed * deltaTime;
 					}
+
 					if (input.Up)
-						t.Value.y += 4 * deltaTime;
+						t.Value.y += speed * deltaTime;
 					if (input.Down)
-						t.Value.y -= 4 * deltaTime;
+						t.Value.y -= speed * deltaTime;
 
 					if (input.Shoot)
 					{
@@ -180,10 +228,9 @@ namespace Assets.March.Player
 							shape = VoxelShape.Circle
 						});
 					}
-				}).Schedule(inputDeps);
-				m_Barrier.AddJobHandleForProducer(handle);
+				}).ScheduleParallel();
+				m_Barrier.AddJobHandleForProducer(Dependency);
 
-				return handle;
 			}
 		}
 	}
