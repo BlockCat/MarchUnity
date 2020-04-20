@@ -39,7 +39,7 @@ public class VoxelGridGhostUpdateSystem : JobComponentSystem
             };
             var ghostEntityArray = chunk.GetNativeArray(ghostEntityType);
             var ghostSnapshotDataArray = chunk.GetBufferAccessor(ghostSnapshotDataType);
-            var ghostChunkComponentArray = chunk.GetNativeArray(ghostChunkComponentType);
+            
             var ghostRotationArray = chunk.GetNativeArray(ghostRotationType);
             var ghostTranslationArray = chunk.GetNativeArray(ghostTranslationType);
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
@@ -61,14 +61,12 @@ public class VoxelGridGhostUpdateSystem : JobComponentSystem
                 VoxelGridSnapshotData snapshotData;
                 snapshot.GetDataAtTick(targetTick, targetTickFraction, out snapshotData);
 
-                var ghostChunkComponent = ghostChunkComponentArray[entityIndex];
                 var ghostRotation = ghostRotationArray[entityIndex];
                 var ghostTranslation = ghostTranslationArray[entityIndex];
-                ghostChunkComponent.x = snapshotData.GetChunkComponentx(deserializerState);
-                ghostChunkComponent.y = snapshotData.GetChunkComponenty(deserializerState);
+
                 ghostRotation.Value = snapshotData.GetRotationValue(deserializerState);
                 ghostTranslation.Value = snapshotData.GetTranslationValue(deserializerState);
-                ghostChunkComponentArray[entityIndex] = ghostChunkComponent;
+
                 ghostRotationArray[entityIndex] = ghostRotation;
                 ghostTranslationArray[entityIndex] = ghostTranslation;
             }
@@ -103,7 +101,7 @@ public class VoxelGridGhostUpdateSystem : JobComponentSystem
             var ghostEntityArray = chunk.GetNativeArray(ghostEntityType);
             var ghostSnapshotDataArray = chunk.GetBufferAccessor(ghostSnapshotDataType);
             var predictedGhostComponentArray = chunk.GetNativeArray(predictedGhostComponentType);
-            var ghostChunkComponentArray = chunk.GetNativeArray(ghostChunkComponentType);
+            
             var ghostRotationArray = chunk.GetNativeArray(ghostRotationType);
             var ghostTranslationArray = chunk.GetNativeArray(ghostTranslationType);
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
@@ -137,14 +135,13 @@ public class VoxelGridGhostUpdateSystem : JobComponentSystem
                 if (lastPredictedTickInst != snapshotData.Tick)
                     continue;
 
-                var ghostChunkComponent = ghostChunkComponentArray[entityIndex];
+                
                 var ghostRotation = ghostRotationArray[entityIndex];
                 var ghostTranslation = ghostTranslationArray[entityIndex];
-                ghostChunkComponent.x = snapshotData.GetChunkComponentx(deserializerState);
-                ghostChunkComponent.y = snapshotData.GetChunkComponenty(deserializerState);
+                
                 ghostRotation.Value = snapshotData.GetRotationValue(deserializerState);
                 ghostTranslation.Value = snapshotData.GetTranslationValue(deserializerState);
-                ghostChunkComponentArray[entityIndex] = ghostChunkComponent;
+                
                 ghostRotationArray[entityIndex] = ghostRotation;
                 ghostTranslationArray[entityIndex] = ghostTranslation;
             }
@@ -208,7 +205,7 @@ public class VoxelGridGhostUpdateSystem : JobComponentSystem
                 ghostSnapshotDataType = GetArchetypeChunkBufferType<VoxelGridSnapshotData>(true),
                 ghostEntityType = GetArchetypeChunkEntityType(),
                 predictedGhostComponentType = GetArchetypeChunkComponentType<PredictedGhostComponent>(),
-                ghostChunkComponentType = GetArchetypeChunkComponentType<ChunkComponent>(),
+                
                 ghostRotationType = GetArchetypeChunkComponentType<Rotation>(),
                 ghostTranslationType = GetArchetypeChunkComponentType<Translation>(),
 
@@ -231,7 +228,7 @@ public class VoxelGridGhostUpdateSystem : JobComponentSystem
 #endif
                 ghostSnapshotDataType = GetArchetypeChunkBufferType<VoxelGridSnapshotData>(true),
                 ghostEntityType = GetArchetypeChunkEntityType(),
-                ghostChunkComponentType = GetArchetypeChunkComponentType<ChunkComponent>(),
+                
                 ghostRotationType = GetArchetypeChunkComponentType<Rotation>(),
                 ghostTranslationType = GetArchetypeChunkComponentType<Translation>(),
                 targetTick = m_ClientSimulationSystemGroup.InterpolationTick,

@@ -65,7 +65,7 @@ public class GoInGameClientSystem : ComponentSystem
 		Entities
 			.WithNone<NetworkStreamInGame>()
 			.ForEach((Entity entity, ref NetworkIdComponent netId) =>
-			{
+			{				
 				Debug.Log("Try setting up client connection");
 				// Add state that the connection entity is in game 
 				PostUpdateCommands.AddComponent<NetworkStreamInGame>(entity);

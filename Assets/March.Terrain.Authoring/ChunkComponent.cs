@@ -1,16 +1,19 @@
-﻿using Unity.Entities;
+﻿using System;
+using Unity.Entities;
 using Unity.NetCode;
 
 namespace March.Terrain.Authoring
 {
 	[GenerateAuthoringComponent]
-	public struct ChunkComponent : IComponentData
+	public struct ChunkComponent : ISharedComponentData, IEquatable<ChunkComponent>
 	{
-		public float Size;
+		//public float Size;
 		[GhostDefaultField] public int x;
 		[GhostDefaultField] public int y;
-		public Entity leftNeighbour;
-		public Entity upNeighbour;
-		public Entity diagNeighbour;		
+
+		public bool Equals(ChunkComponent other)
+		{
+			return x == other.x && y == other.y;
+		}
 	}
 }

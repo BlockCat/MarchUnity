@@ -16,15 +16,15 @@ using UnityEngine;
 namespace March.Terrain
 {
 
-	public class UpdateChunkSystem : JobComponentSystem
+	/*public class UpdateChunkSystem : JobComponentSystem
 	{
 		private BeginSimulationEntityCommandBufferSystem m_Barrier;
-		
+
 
 		protected override void OnCreate()
 		{
 			m_Barrier = World.GetOrCreateSystem<BeginSimulationEntityCommandBufferSystem>();
-			
+
 			RequireSingletonForUpdate<LevelComponent>();
 			RequireForUpdate(GetEntityQuery(typeof(UpdateChunkTag), typeof(ChunkComponent)));
 		}
@@ -33,8 +33,11 @@ namespace March.Terrain
 			var barrier = m_Barrier.CreateCommandBuffer().ToConcurrent();
 			var level = GetSingleton<LevelComponent>();
 			var voxelBuffer = m_Barrier.GetBufferFromEntity<VoxelBuffer>(false);
+
+
 			var updateVoxelHandle = Entities
 				.WithBurst()
+
 				//.WithoutBurst()
 				.WithNativeDisableParallelForRestriction(voxelBuffer)
 				.WithName("Update_Chunk")
@@ -46,8 +49,6 @@ namespace March.Terrain
 
 					var stencilCenter = new float4(stencil.centerX, stencil.centerY, 0, 1);
 					var translatedStencil = math.mul(math.inverse(pp.Value), stencilCenter);
-					var xNeighbor = cc.leftNeighbour;
-					var yNeighbor = cc.upNeighbour;
 
 					stencil.centerX = translatedStencil.x;
 					stencil.centerY = translatedStencil.y;
@@ -159,7 +160,8 @@ namespace March.Terrain
 					var cy1 = stencil.centerY + d;
 					if (v2.yEdge == float.MinValue || v2.yEdge > cy1)
 						v2.yEdge = cy1;
-				} else
+				}
+				else
 				{
 					v2.yEdge = float.MinValue;
 				}
@@ -167,7 +169,7 @@ namespace March.Terrain
 			}
 			else if (y == 0 && yNeighbor != Entity.Null)
 			{
-				
+
 			}
 
 			if (y < LevelComponent.VoxelResolution - 1 && !stencil.InRange(buffer[i + LevelComponent.VoxelResolution].Value.position))
@@ -301,5 +303,5 @@ namespace March.Terrain
 		}
 	}
 
-
+	*/
 }

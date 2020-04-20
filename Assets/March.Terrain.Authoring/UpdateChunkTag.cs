@@ -7,10 +7,10 @@ using Unity.Entities;
 
 namespace March.Terrain.Authoring
 {
-	public struct UpdateChunkTag : IComponentData
+	/*public struct UpdateChunkTag : IComponentData
 	{
 		public VoxelStencilInput input;
-	}
+	}*/
 
 	public struct MeshAssignTag : IComponentData { }
 	public struct TriangulateTag : IComponentData { }

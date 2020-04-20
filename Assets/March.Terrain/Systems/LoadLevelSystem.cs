@@ -65,39 +65,28 @@ namespace March.Terrain
 			var random = new Unity.Mathematics.Random();
 			random.InitState(1231231453);
 
-			Entity[,] neighbours = new Entity[request.ChunkResolution, request.ChunkResolution];
+
 			for (int y = request.ChunkResolution - 1; y >= 0; y--)
 			{
 				for (int x = request.ChunkResolution - 1; x >= 0; x--)
 				{
-					var chunkEntity = EntityManager.Instantiate(chunkPrefabEntity);
-					neighbours[x, y] = chunkEntity;
-
-#if UNITY_EDITOR
-					EntityManager.SetName(chunkEntity, $"Chunk_{x}_{y}");
-#endif
-
-					Entity left = x < request.ChunkResolution - 1 ? neighbours[x + 1, y] : Entity.Null;
-					Entity up = y < request.ChunkResolution - 1 ? neighbours[x, y + 1] : Entity.Null;
-					Entity diag = y < request.ChunkResolution - 1 && x < request.ChunkResolution - 1 ? neighbours[x + 1, y + 1] : Entity.Null;
-					EntityManager.SetComponentData(chunkEntity, new ChunkComponent
+					var chunkData = new ChunkComponent
 					{
-						Size = level.chunkSize,
 						x = x,
-						y = y,
-						leftNeighbour = left,
-						upNeighbour = up,
-						diagNeighbour = diag
-					});
-					var mesh = new Mesh();
-					mesh.vertices = new Vector3[4]
-					{
-						new Vector3(0, 0, 0),
-						new Vector3(request.Size, 0, 0),
-						new Vector3(0, request.Size, 0),
-						new Vector3(1, request.Size, 0)
+						y = y
 					};
-					mesh.triangles = new int[6] { 0, 1, 2, 1, 3, 2 };
+
+					/*var mesh = new Mesh
+					{
+						vertices = new Vector3[4]
+						{
+							new Vector3(0, 0, 0),
+							new Vector3(request.Size, 0, 0),
+							new Vector3(0, request.Size, 0),
+							new Vector3(1, request.Size, 0)
+						},
+						triangles = new int[6] { 0, 1, 2, 1, 3, 2 }
+					};
 
 					var v = new Vector3(0, 0, 1);
 					mesh.normals = new Vector3[4] { v, v, v, v };
@@ -119,16 +108,22 @@ namespace March.Terrain
 						receiveShadows = false,
 						castShadows = UnityEngine.Rendering.ShadowCastingMode.Off,
 
-					});
-
-					var voxelBuffer = EntityManager.AddBuffer<VoxelBuffer>(chunkEntity);
-					for (int vy = 0; vy < LevelComponent.VoxelResolution; vy++)
+					});*/
+					float chunkOffsetX = x * level.chunkSize;
+					float chunkOffsetY = y * level.chunkSize;
+					for (int vy = 0, i = 0; vy < LevelComponent.VoxelResolution; vy++)
 					{
-						for (int vx = 0; vx < LevelComponent.VoxelResolution; vx++)
+						for (int vx = 0; vx < LevelComponent.VoxelResolution; vx++, i++)
 						{
-							bool st = random.NextBool();//(vx + vy) % 2 == 0;
-							st = true;
-							voxelBuffer.Add(new Voxel(st, vx, vy, level.voxelSize));
+							// Temp because... prefab
+							var voxelEntity = EntityManager.CreateEntity();
+
+							EntityManager.AddSharedComponentData(voxelEntity, chunkData);
+							EntityManager.AddComponentData(voxelEntity, new Translation
+							{
+								Value = new float3(chunkOffsetX + (vx + 0.5f) * level.voxelSize,chunkOffsetY + (vy + 0.5f) * level.voxelSize,0)
+							});
+							EntityManager.AddComponentData(voxelEntity, new Voxel(i, true, level.voxelSize));
 						}
 					}
 				}

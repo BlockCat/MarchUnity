@@ -29,7 +29,7 @@ public struct VoxelGridGhostSerializer : IGhostSerializer<VoxelGridSnapshotData>
         componentTypeLocalToWorld = ComponentType.ReadWrite<LocalToWorld>();
         componentTypeRotation = ComponentType.ReadWrite<Rotation>();
         componentTypeTranslation = ComponentType.ReadWrite<Translation>();
-        ghostChunkComponentType = system.GetArchetypeChunkComponentType<ChunkComponent>(true);
+        
         ghostRotationType = system.GetArchetypeChunkComponentType<Rotation>(true);
         ghostTranslationType = system.GetArchetypeChunkComponentType<Translation>(true);
     }
@@ -37,11 +37,9 @@ public struct VoxelGridGhostSerializer : IGhostSerializer<VoxelGridSnapshotData>
     public void CopyToSnapshot(ArchetypeChunk chunk, int ent, uint tick, ref VoxelGridSnapshotData snapshot, GhostSerializerState serializerState)
     {
         snapshot.tick = tick;
-        var chunkDataChunkComponent = chunk.GetNativeArray(ghostChunkComponentType);
+        
         var chunkDataRotation = chunk.GetNativeArray(ghostRotationType);
         var chunkDataTranslation = chunk.GetNativeArray(ghostTranslationType);
-        snapshot.SetChunkComponentx(chunkDataChunkComponent[ent].x, serializerState);
-        snapshot.SetChunkComponenty(chunkDataChunkComponent[ent].y, serializerState);
         snapshot.SetRotationValue(chunkDataRotation[ent].Value, serializerState);
         snapshot.SetTranslationValue(chunkDataTranslation[ent].Value, serializerState);
     }

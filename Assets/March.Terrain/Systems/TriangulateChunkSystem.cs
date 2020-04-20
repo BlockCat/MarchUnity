@@ -1,4 +1,5 @@
 ﻿using March.Terrain.Authoring;
+using System.Collections.Generic;
 using System.Linq;
 
 using Unity.Burst;
@@ -31,15 +32,16 @@ namespace March.Terrain
 		public static implicit operator VectorBuffer(Vector3 e) => new VectorBuffer { Value = e };
 	}
 
-	[UpdateInGroup(typeof(ClientPresentationSystemGroup))]
-	[UpdateAfter(typeof(UpdateChunkSystem))]
-	public class TriangulateChunkSystem : JobComponentSystem
+	[UpdateInGroup(typeof(ClientPresentationSystemGroup))]	
+	public class TriangulateChunkSystem : SystemBase
 	{
 		private BeginSimulationEntityCommandBufferSystem m_Barrier;
+		private VoxelCollectSystem m_VoxelSystem;
 
 		protected override void OnCreate()
 		{
 			m_Barrier = World.GetOrCreateSystem<BeginSimulationEntityCommandBufferSystem>();
+			m_VoxelSystem = World.GetOrCreateSystem<VoxelCollectSystem>();
 			RequireForUpdate(GetEntityQuery(typeof(TriangulateTag)));
 			RequireSingletonForUpdate<LevelComponent>();
 		}
@@ -82,24 +84,25 @@ namespace March.Terrain
 		}
 
 		#endregion
-		protected override JobHandle OnUpdate(JobHandle inputDeps)
+		protected override void OnUpdate()
 		{
-			inputDeps.Complete();
 			var barrier = m_Barrier.CreateCommandBuffer().ToConcurrent();
-			var bfe = m_Barrier.GetBufferFromEntity<VoxelBuffer>(true);
 			var level = GetSingleton<LevelComponent>();
-			var handle = Entities
+
+			var chunks = m_VoxelSystem.Chunks.GetKeyArray(Allocator.Temp);
+			foreach (var entry in chunks)
+			{
+				var voxels = m_VoxelSystem.Chunks[entry];
+#error TODODODODO
+
+			}
+			Entities
 				.WithBurst()
-				.WithReadOnly(bfe)
 				.WithName("Do_Triangulation")
 				.WithAll<RenderMesh>()
 				.ForEach((Entity entity, int entityInQueryIndex, ref ChunkComponent cc, in TriangulateTag updateData) =>
 				{
 					int edgeCacheMin = 0, edgeCacheMax = 0;
-
-					var xNeighbour = cc.leftNeighbour;
-					var yNeighbour = cc.upNeighbour;
-					var xyNeighbour = cc.diagNeighbour;
 
 					var rowCacheMax = new NativeArray<int>(LevelComponent.VoxelResolution * 2 + 1, Allocator.Temp, NativeArrayOptions.UninitializedMemory);
 					var rowCacheMin = new NativeArray<int>(LevelComponent.VoxelResolution * 2 + 1, Allocator.Temp, NativeArrayOptions.UninitializedMemory);
@@ -122,11 +125,11 @@ namespace March.Terrain
 					barrier.AddComponent<MeshAssignTag>(entityInQueryIndex, entity);
 
 
-					#region wtf tbh					
-					void FillFirstRowCache(float chunkSize)
+						#region wtf tbh					
+						void FillFirstRowCache(float chunkSize)
 					{
-						// first corner
-						var voxels = bfe[entity];
+							// first corner
+							var voxels = bfe[entity];
 						CacheFirstCorner(voxels[0]);
 						int i;
 						for (i = 0; i < LevelComponent.VoxelResolution - 1; i++)
@@ -337,14 +340,13 @@ namespace March.Terrain
 						}
 					}
 
-					#endregion
+						#endregion
 
 
-				}).Schedule(inputDeps);
+					}).ScheduleParallel();
 
-			m_Barrier.AddJobHandleForProducer(handle);
+			m_Barrier.AddJobHandleForProducer(Dependency);
 
-			return handle;
 		}
 	}
 

@@ -7,6 +7,7 @@ using Unity.Entities;
 using Unity.Mathematics;
 using Unity.NetCode;
 using Unity.Networking.Transport;
+using Unity.Transforms;
 
 namespace March.Terrain.Authoring
 {
@@ -68,10 +69,10 @@ namespace March.Terrain.Authoring
 
 		}
 
-		public bool InRange(float2 pos)
+		public bool InRange(in Translation pos)
 		{
-			float px = pos.x;
-			float py = pos.y;
+			float px = pos.Value.x;
+			float py = pos.Value.y;
 			switch (shape)
 			{
 				case VoxelShape.Circle:
